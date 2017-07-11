@@ -9,14 +9,12 @@ namespace Heartcatch.Models
 
         [SerializeField] private string firstSceneBundle;
 
-        public string AssetBundleURL
-        {
-            get { return assetBundleUrl; }
-        }
+        [SerializeField] private bool isDevelopmentMode;
 
-        public string FirstSceneBundle
-        {
-            get { return firstSceneBundle; }
-        }
+        public bool IsDevelopmentMode => isDevelopmentMode;
+
+        public string AssetBundleUrl => assetBundleUrl;
+
+        public string FirstSceneBundle => firstSceneBundle;
     }
 }

@@ -7,99 +7,93 @@ namespace Heartcatch.Models
 {
     public sealed class AssetBundleModel : IAssetBundleModel
     {
-        private readonly string[] _dependencies;
-        private readonly LoaderService _loaderService;
-        private readonly string _name;
-        private AssetBundle _assetBundle;
-        private int _referenceCount;
+        private readonly string[] dependencies;
+        private readonly LoaderService loaderService;
+        private readonly string name;
+        private AssetBundle assetBundle;
+        private int referenceCount;
 
         public AssetBundleModel(LoaderService loaderService, AssetBundleManifest manifest, string name)
         {
-            _name = name;
-            _loaderService = loaderService;
-            _referenceCount = 0;
-            _dependencies = manifest.GetDirectDependencies(name);
+            this.name = name;
+            this.loaderService = loaderService;
+            referenceCount = 0;
+            dependencies = manifest.GetDirectDependencies(name);
         }
 
-        public bool IsLoaded
-        {
-            get { return IsLoadedItself && isAllDependenciesLoaded(); }
-        }
+        public bool IsLoaded => IsLoadedItself && IsAllDependenciesLoaded();
 
-        public bool IsLoadedItself
-        {
-            get { return _assetBundle != null; }
-        }
+        public bool IsLoadedItself => assetBundle != null;
 
         public void LoadAsset<T>(string name, Action<T> onLoaded) where T : Object
         {
-            checkIfLoaded();
-            _loaderService.addLoadingOperation(new LoadAssetOperation<T>(_assetBundle, name, onLoaded));
+            CheckIfLoaded();
+            loaderService.AddLoadingOperation(new LoadAssetOperation<T>(assetBundle, name, onLoaded));
         }
 
         public void LoadAllAssets<T>(Action<T[]> onLoaded) where T : Object
         {
-            checkIfLoaded();
-            _loaderService.addLoadingOperation(new LoadAllAssetsOperation<T>(_assetBundle, onLoaded));
+            CheckIfLoaded();
+            loaderService.AddLoadingOperation(new LoadAllAssetsOperation<T>(assetBundle, onLoaded));
         }
 
         public string GetScenePath(int index)
         {
-            checkIfLoaded();
-            var allPaths = _assetBundle.GetAllScenePaths();
+            CheckIfLoaded();
+            var allPaths = assetBundle.GetAllScenePaths();
             return allPaths[index];
         }
 
         public void Unload()
         {
-            _referenceCount--;
-            if (_referenceCount == 0)
+            referenceCount--;
+            if (referenceCount == 0)
             {
-                _assetBundle.Unload(true);
-                _assetBundle = null;
-                foreach (var it in _dependencies)
-                    _loaderService.getAssetBundle(it).Unload();
+                assetBundle.Unload(true);
+                assetBundle = null;
+                foreach (var it in dependencies)
+                    loaderService.GetAssetBundle(it).Unload();
             }
         }
 
-        internal void onLoaded(AssetBundle assetBundle)
+        internal void OnLoaded(AssetBundle assetBundle)
         {
-            if (_assetBundle != null || _referenceCount != 0)
-                throw new InvalidOperationException(string.Format("AssetBundleModel \"{0}\" is already loaded", _name));
-            _assetBundle = assetBundle;
-            _referenceCount = 1;
-            foreach (var it in _dependencies)
-                _loaderService.loadAssetBundle(it);
+            if (this.assetBundle != null || referenceCount != 0)
+                throw new InvalidOperationException(string.Format("AssetBundleModel \"{0}\" is already loaded", name));
+            this.assetBundle = assetBundle;
+            referenceCount = 1;
+            foreach (var it in dependencies)
+                loaderService.loadAssetBundle(it);
         }
 
-        internal void addReference()
+        internal void AddReference()
         {
-            if (_assetBundle == null)
+            if (assetBundle == null)
                 throw new InvalidOperationException(
-                    string.Format("Can add reference to not loaded asset bundle \"0\"", _name));
-            _referenceCount++;
+                    string.Format("Can add reference to not loaded asset bundle \"0\"", name));
+            referenceCount++;
         }
 
-        private void checkIfLoaded()
+        private void CheckIfLoaded()
         {
             if (!IsLoaded)
-                throw new LoadingException(string.Format("Asset bundle \"{0}\" isn't loaded yet", _name));
+                throw new LoadingException(string.Format("Asset bundle \"{0}\" isn't loaded yet", name));
         }
 
-        internal void forceUnload()
+        internal void ForceUnload()
         {
-            _referenceCount = 0;
-            if (_assetBundle != null)
+            referenceCount = 0;
+            if (assetBundle != null)
             {
-                _assetBundle.Unload(true);
-                _assetBundle = null;
+                assetBundle.Unload(true);
+                assetBundle = null;
             }
         }
 
-        private bool isAllDependenciesLoaded()
+        private bool IsAllDependenciesLoaded()
         {
-            foreach (var it in _dependencies)
-                if (!_loaderService.isAssetBundleLoaded(it))
+            foreach (var it in dependencies)
+                if (!loaderService.IsAssetBundleLoaded(it))
                     return false;
             return true;
         }

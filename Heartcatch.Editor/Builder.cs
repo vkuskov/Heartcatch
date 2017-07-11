@@ -10,7 +10,7 @@ namespace Heartcatch.Editor
 {
     public class Builder
     {
-        public const string BUILD = "Build";
+        public const string Build = "Build";
 
         [MenuItem("Assets/AssetBundles/Build Bundles")]
         public static void BuildBundlesForCurrentPlatform()
@@ -39,18 +39,18 @@ namespace Heartcatch.Editor
             BuildGame(EditorUserBuildSettings.activeBuildTarget, true, true);
         }
 
-        public static void BuildCIForCurrentPlatform()
+        public static void BuildCiForCurrentPlatform()
         {
-            BuildCI(EditorUserBuildSettings.activeBuildTarget);
+            BuildCi(EditorUserBuildSettings.activeBuildTarget);
         }
 
-        public static void BuildCI(BuildTarget target)
+        public static void BuildCi(BuildTarget target)
         {
             BuildPlayerOptions options = new BuildPlayerOptions
             {
                 target = target,
-                locationPathName = Path.Combine(BUILD, getBuildTargetName(target)),
-                scenes = getScenesToBuild(),
+                locationPathName = Path.Combine(Build, GetBuildTargetName(target)),
+                scenes = GetScenesToBuild(),
                 options = BuildOptions.StrictMode | BuildOptions.BuildScriptsOnly
             };
             BuildPipeline.BuildPlayer(options);
@@ -64,21 +64,21 @@ namespace Heartcatch.Editor
                 var manifest = BuildBundles(target, localBuild);
                 if (manifest != null)
                 {
-                    copyAssetBundlesToStreamingAssets(assetBundlePath, localBuild);
+                    CopyAssetBundlesToStreamingAssets(assetBundlePath, localBuild);
                 }
             }
             BuildPlayerOptions options = new BuildPlayerOptions
             {
                 target = target,
                 assetBundleManifestPath = Path.Combine(assetBundlePath, Utility.GetPlatformName()),
-                locationPathName = Path.Combine(BUILD, getBuildTargetName(target)),
-                scenes = getScenesToBuild(),
+                locationPathName = Path.Combine(Build, GetBuildTargetName(target)),
+                scenes = GetScenesToBuild(),
                 options = BuildOptions.StrictMode
             };
             BuildPipeline.BuildPlayer(options);
         }
 
-        private static string[] getScenesToBuild()
+        private static string[] GetScenesToBuild()
         {
             List<string> levels = new List<string>();
             for (int i = 0; i < EditorBuildSettings.scenes.Length; ++i)
@@ -90,7 +90,7 @@ namespace Heartcatch.Editor
             return levels.ToArray();
         }
 
-        public static string getBuildTargetName(BuildTarget target)
+        public static string GetBuildTargetName(BuildTarget target)
         {
             switch (target)
             {
@@ -116,7 +116,7 @@ namespace Heartcatch.Editor
             }
         }
 
-        private static void copyAssetBundlesToStreamingAssets(string path, bool fullCopy)
+        private static void CopyAssetBundlesToStreamingAssets(string path, bool fullCopy)
         {
             if (Directory.Exists(Application.streamingAssetsPath))
             {
@@ -124,21 +124,21 @@ namespace Heartcatch.Editor
             }
             var fullPath = Path.Combine(Application.streamingAssetsPath, path);
             Directory.CreateDirectory(fullPath);
-            foreach (var it in getAssetsForStreamingAssets(fullCopy))
+            foreach (var it in GetAssetsForStreamingAssets(fullCopy))
             {
-                copySingleBundle(path, fullPath, it);
+                CopySingleBundle(path, fullPath, it);
             }
-            copySingleBundle(path, fullPath, Utility.GetPlatformName());
+            CopySingleBundle(path, fullPath, Utility.GetPlatformName());
         }
 
-        private static void copySingleBundle(string source, string destination, string name)
+        private static void CopySingleBundle(string source, string destination, string name)
         {
             var srcPath = Path.Combine(source, name);
             var destPath = Path.Combine(destination, name);
             File.Copy(srcPath, destPath);
         }
 
-        private static IEnumerable<string> getAssetsForStreamingAssets(bool fullCopy)
+        private static IEnumerable<string> GetAssetsForStreamingAssets(bool fullCopy)
         {
             var guids = AssetDatabase.FindAssets(string.Format("t:{0}", typeof(AssetBundleDescriptionModel)));
             foreach (var guid in guids)
@@ -152,18 +152,18 @@ namespace Heartcatch.Editor
             }
         }
 
-        public static AssetBundleManifest BuildBundles(BuildTarget target, bool preferLZ4)
+        public static AssetBundleManifest BuildBundles(BuildTarget target, bool preferLz4)
         {
             Debug.Log("Build asset bundles");
             var path = GetAssetBundlePath(target);
             Directory.CreateDirectory(path);
-            var bundles = getAssetBundlesToBuild().ToArray();
+            var bundles = GetAssetBundlesToBuild().ToArray();
             var options = BuildAssetBundleOptions.StrictMode;
             if (target == BuildTarget.WebGL)
             {
                 options |= BuildAssetBundleOptions.UncompressedAssetBundle;
             }
-            else if (preferLZ4)
+            else if (preferLz4)
             {
                 options |= BuildAssetBundleOptions.ChunkBasedCompression;
             }
@@ -173,7 +173,7 @@ namespace Heartcatch.Editor
                 target);
         }
 
-        private static IEnumerable<AssetBundleBuild> getAssetBundlesToBuild()
+        private static IEnumerable<AssetBundleBuild> GetAssetBundlesToBuild()
         {
             var guids = AssetDatabase.FindAssets(string.Format("t:{0}", typeof(AssetBundleDescriptionModel)));
             foreach (var guid in guids)
@@ -197,25 +197,25 @@ namespace Heartcatch.Editor
         public static string GetAssetBundlePath(BuildTarget target)
         {
             var platform = Utility.GetPlatformForAssetBundles(target);
-            return Path.Combine(Utility.ASSET_BUNDLES_OUTPUT_PATH, platform);
+            return Path.Combine(Utility.AssetBundlesOutputPath, platform);
         }
 
-        const string SIMULATION_MODE_MENU = "Assets/AssetBundles/Simulation Mode";
+        const string SimulationModeMenu = "Assets/AssetBundles/Simulation Mode";
 
-        [MenuItem(SIMULATION_MODE_MENU)]
+        [MenuItem(SimulationModeMenu)]
         public static void ToggleSimulationMode()
         {
-            var simulationMode = PlayerPrefs.GetInt(Utility.ASSET_BUNDLE_SIMULATION_MODE, 0) != 0;
+            var simulationMode = PlayerPrefs.GetInt(Utility.AssetBundleSimulationMode, 0) != 0;
             simulationMode = !simulationMode;
             var set = simulationMode ? 1 : 0;
-            PlayerPrefs.SetInt(Utility.ASSET_BUNDLE_SIMULATION_MODE, set);
+            PlayerPrefs.SetInt(Utility.AssetBundleSimulationMode, set);
         }
 
-        [MenuItem(SIMULATION_MODE_MENU, true)]
+        [MenuItem(SimulationModeMenu, true)]
         public static bool ToggleSimulationModeValidate()
         {
-            var simulationMode = PlayerPrefs.GetInt(Utility.ASSET_BUNDLE_SIMULATION_MODE, 0) != 0;
-            Menu.SetChecked(SIMULATION_MODE_MENU, simulationMode);
+            var simulationMode = PlayerPrefs.GetInt(Utility.AssetBundleSimulationMode, 0) != 0;
+            Menu.SetChecked(SimulationModeMenu, simulationMode);
             return !Application.isPlaying;
         }
     }

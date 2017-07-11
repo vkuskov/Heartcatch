@@ -10,5 +10,6 @@ namespace Heartcatch.Services
         void LoadAssetBundle(string name, Action<IAssetBundleModel> onLoaded);
         void GetOrLoadAssetBundle(string name, Action<IAssetBundleModel> onLoaded);
         void UnloadAll();
+        void Update();
     }
 }

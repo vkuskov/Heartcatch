@@ -4,7 +4,7 @@ namespace Heartcatch.Services
 {
     public sealed class UpdateService : IUpdateService
     {
-        private readonly List<Data> _toSubscribe = new List<Data>();
+        private readonly List<Data> toSubscribe = new List<Data>();
 
         private readonly DataSorter sorter = new DataSorter();
         private readonly List<IUpdateable> toRemove = new List<IUpdateable>();
@@ -13,7 +13,7 @@ namespace Heartcatch.Services
 
         public void Subscribe(IUpdateable updateable, int priority)
         {
-            _toSubscribe.Add(new Data
+            toSubscribe.Add(new Data
             {
                 Priorirty = priority,
                 Updateable = updateable
@@ -27,11 +27,11 @@ namespace Heartcatch.Services
 
         public void Update()
         {
-            if (_toSubscribe.Count > 0)
+            if (toSubscribe.Count > 0)
             {
-                foreach (var it in _toSubscribe)
+                foreach (var it in toSubscribe)
                     updateables.Add(it);
-                _toSubscribe.Clear();
+                toSubscribe.Clear();
                 updateables.Sort(sorter);
             }
             foreach (var it in updateables)

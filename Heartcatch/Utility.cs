@@ -9,8 +9,8 @@ namespace Heartcatch
 {
     public class Utility
     {
-        public const string ASSET_BUNDLES_OUTPUT_PATH = "AssetBundles";
-        public const string ASSET_BUNDLE_SIMULATION_MODE = "__assetBundleSimulation";
+        public const string AssetBundlesOutputPath = "AssetBundles";
+        public const string AssetBundleSimulationMode = "__assetBundleSimulation";
 
         public static string GetPlatformName()
         {

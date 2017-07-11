@@ -1,18 +1,19 @@
-﻿using Heartcatch.Models;
+﻿using System.Net;
+using System.Net.Sockets;
+using Heartcatch.Models;
 using Heartcatch.Services;
 using UnityEngine;
-using UnityEngine.Networking;
 
 namespace Heartcatch
 {
-    public class MainContext : SignalContext
+    public abstract class MainContext : SignalContext
     {
-        private const string GAME_CONFIG_RESOURCE = "GameConfig";
+        private const string GameConfigResource = "GameConfig";
 
-        private BaseLevelLoaderService _levelLoaderService;
-        private LoaderService _loaderService;
-        private SmoothTimeService _timeService;
-        private UpdateService _updateService;
+        private BaseLevelLoaderService levelLoaderService;
+        private LoaderService loaderService;
+        private SmoothTimeService timeService;
+        private UpdateService updateService;
 
         public MainContext(MonoBehaviour view) : base(view)
         {
@@ -21,74 +22,36 @@ namespace Heartcatch
         protected override void mapBindings()
         {
             base.mapBindings();
-            var gameConfig = Resources.Load<GameConfigModel>(GAME_CONFIG_RESOURCE);
+            var gameConfig = Resources.Load<GameConfigModel>(GameConfigResource);
             injectionBinder.Bind<IGameConfigModel>().ToValue(gameConfig).CrossContext();
-#if UNITY_EDITOR
-            if (useSimuationMode())
-            {
-                _levelLoaderService = new SimulatedLevelLoaderService();
-                injectionBinder.Bind<ILoaderService>().To<SimulatedLoaderService>().ToSingleton().CrossContext();
-                injectionBinder.Bind<ILevelLoaderService>().ToValue(_levelLoaderService).CrossContext();
-            }
-            else
-            {
-                _loaderService = new LoaderService(getServerURL(gameConfig));
-                _levelLoaderService = new LevelLoaderService();
-                injectionBinder.Bind<ILoaderService>().ToValue(_loaderService).CrossContext();
-                injectionBinder.Bind<ILevelLoaderService>().ToValue(_levelLoaderService);
-            }
-#else
-            _loaderService = new LoaderService(getServerURL(gameConfig));
-            _levelLoaderService = new LevelLoaderService();
-            injectionBinder.Bind<ILoaderService>().ToValue(_loaderService).CrossContext();
-            injectionBinder.Bind<ILevelLoaderService>().ToValue(_levelLoaderService);
-#endif
-            _updateService = new UpdateService();
-            _timeService = new SmoothTimeService();
-            injectionBinder.Bind<IUpdateService>().ToValue(_updateService).CrossContext();
-            injectionBinder.Bind<ITimeService>().ToValue(_timeService).CrossContext();
+            loaderService = new LoaderService(GetServerUrl(gameConfig));
+            levelLoaderService = new LevelLoaderService();
+            injectionBinder.Bind<ILoaderService>().ToValue(loaderService).CrossContext();
+            injectionBinder.Bind<ILevelLoaderService>().ToValue(levelLoaderService);
+
+            updateService = new UpdateService();
+            timeService = new SmoothTimeService();
+            injectionBinder.Bind<IUpdateService>().ToValue(updateService).CrossContext();
+            injectionBinder.Bind<ITimeService>().ToValue(timeService).CrossContext();
             injectionBinder.Bind<AssetsReadySignal>().ToSingleton().CrossContext();
         }
 
-        private string getServerURL(IGameConfigModel config)
+        private string GetServerUrl(IGameConfigModel config)
         {
-#if UNITY_EDITOR && !FORCE_REAL_BUNDLES
-            IPHostEntry host;
-            var localIP = "";
-            host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (var ip in host.AddressList)
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
-                {
-                    localIP = ip.ToString();
-                    break;
-                }
-            return string.Format("http://{0}:7888/{1}/{2}",
-                                 localIP,
-                                 Utility.ASSET_BUNDLES_OUTPUT_PATH,
-                                 Utility.GetPlatformName());
-
-#else
-#if LOCAL_BUNDLES
-            return string.Format("file://{0}/{1}/{2}", Application.streamingAssetsPath, Utility.ASSET_BUNDLES_OUTPUT_PATH, Utility.GetPlatformName());
-#else
-#if RELEASE_BUILD
-            return string.Format("{0}/bundles/{1}/{2}", config.AssetBundleURL, Utility.ASSET_BUNDLES_OUTPUT_PATH,
-                Utility.GetPlatformName());
-#else
-            return string.Format("{0}/devbundles/{1}/{2}", config.AssetBundleURL, Utility.ASSET_BUNDLES_OUTPUT_PATH,
-                Utility.GetPlatformName());
-#endif // RELEASE_BUILD 
-#endif // LOCAL_BUNDLES
-#endif // UNITY_EDITOR && !FORCE_REAL_BUNDLES
+            if (Application.isEditor)
+                return GetLocalServerUrl();
+            if (config.IsDevelopmentMode)
+                return GetDevelopmentCloudServerUrl(config);
+            return GetCloudServerUrl(config);
         }
 
         public void Update()
         {
-            _timeService.Update(Time.deltaTime);
-            _levelLoaderService.Update();
-            if (_loaderService != null)
-                _loaderService.Update();
-            _updateService.Update();
+            timeService.Update(Time.deltaTime);
+            levelLoaderService.Update();
+            if (loaderService != null)
+                loaderService.Update();
+            updateService.Update();
         }
 
         public void OnAssetsReady()
@@ -97,9 +60,42 @@ namespace Heartcatch
             signal.Dispatch();
         }
 
-        private bool useSimuationMode()
+        private bool UseSimuationMode()
         {
-            return PlayerPrefs.GetInt(Utility.ASSET_BUNDLE_SIMULATION_MODE, 0) != 0;
+            return PlayerPrefs.GetInt(Utility.AssetBundleSimulationMode, 0) != 0;
         }
+
+        protected string GetLocalServerUrl()
+        {
+            IPHostEntry host;
+            var localIp = string.Empty;
+            host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    localIp = ip.ToString();
+                    break;
+                }
+            return string.Format("http://{0}:7888/{1}/{2}",
+                localIp,
+                Utility.AssetBundlesOutputPath,
+                Utility.GetPlatformName());
+        }
+
+        protected string GetCloudServerUrl(IGameConfigModel config)
+        {
+            return string.Format("{0}/bundles/{1}/{2}", config.AssetBundleUrl, Utility.AssetBundlesOutputPath,
+                Utility.GetPlatformName());
+        }
+
+        protected string GetDevelopmentCloudServerUrl(IGameConfigModel config)
+        {
+            return string.Format("{0}/devbundles/{1}/{2}", config.AssetBundleUrl, Utility.AssetBundlesOutputPath,
+                Utility.GetPlatformName());
+        }
+
+        protected abstract ILoaderService CreateLoaderService(IGameConfigModel config);
+
+        protected abstract ILevelLoaderService CreateLevelLoaderService();
     }
 }

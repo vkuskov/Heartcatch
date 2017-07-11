@@ -7,21 +7,21 @@ namespace Heartcatch.Services
 {
     public sealed class LoaderService : ILoaderService
     {
-        private readonly Dictionary<string, AssetBundleModel> _assetBundles = new Dictionary<string, AssetBundleModel>()
+        private readonly Dictionary<string, AssetBundleModel> assetBundles = new Dictionary<string, AssetBundleModel>()
             ;
 
-        private readonly string _baseURL;
+        private readonly string baseUrl;
+        private readonly IAssetLoaderFactory loaderFactory;
 
-        private readonly Dictionary<string, AssetBundleModel> _loadingAssetBundles =
+        private readonly Dictionary<string, AssetBundleModel> loadingAssetBundles =
             new Dictionary<string, AssetBundleModel>();
 
-        private readonly List<ILoadingOperation> _loadingOperations = new List<ILoadingOperation>();
-        private AssetBundleManifest _assetBundleManifest;
-        private readonly IAssetLoaderFactory _loaderFactory;
+        private readonly List<ILoadingOperation> loadingOperations = new List<ILoadingOperation>();
+        private AssetBundleManifest assetBundleManifest;
 
         public LoaderService(string url)
         {
-            _baseURL = url;
+            baseUrl = url;
 
 #if LOCAL_BUNDLES
             var path = Path.Combine(Application.streamingAssetsPath,
@@ -29,75 +29,69 @@ namespace Heartcatch.Services
             Debug.LogFormat("Base path: {0}", path);
             _loaderFactory = new LocalAssetLoaderFactory(this, path);
 #else
-            Debug.LogFormat("Base URL: {0}", _baseURL);
-            _loaderFactory = new WebAssetLoaderFactory(this, url);
+            Debug.LogFormat("Base URL: {0}", baseUrl);
+            loaderFactory = new WebAssetLoaderFactory(this, url);
 #endif
 
-            addLoadingOperation(_loaderFactory.LoadAssetBundleManifest(Utility.GetPlatformName()));
+            AddLoadingOperation(loaderFactory.LoadAssetBundleManifest(Utility.GetPlatformName()));
         }
 
-        public bool IsLoading
-        {
-            get { return _loadingOperations.Count > 0; }
-        }
+        public bool IsLoading => loadingOperations.Count > 0;
 
-        public bool IsInitialized
-        {
-            get { return _assetBundleManifest != null; }
-        }
+        public bool IsInitialized => assetBundleManifest != null;
 
         public void LoadAssetBundle(string name, Action<IAssetBundleModel> onLoaded)
         {
-            var bundle = getAssetBundle(name);
+            var bundle = GetAssetBundle(name);
             if (bundle.IsLoaded)
             {
-                bundle.addReference();
+                bundle.AddReference();
                 onLoaded(bundle);
             }
             else
             {
-                if (!_loadingAssetBundles.ContainsKey(name))
+                if (!loadingAssetBundles.ContainsKey(name))
                     loadAssetBundle(name);
-                addLoadingOperation(new WaitForAssetBundleToLoad(this, name, onLoaded));
+                AddLoadingOperation(new WaitForAssetBundleToLoad(this, name, onLoaded));
             }
         }
 
         public void GetOrLoadAssetBundle(string name, Action<IAssetBundleModel> onLoaded)
         {
-            var bundle = getAssetBundle(name);
+            var bundle = GetAssetBundle(name);
             if (bundle.IsLoaded)
             {
                 onLoaded(bundle);
             }
             else
             {
-                if (!_loadingAssetBundles.ContainsKey(name))
+                if (!loadingAssetBundles.ContainsKey(name))
                     loadAssetBundle(name);
-                addLoadingOperation(new WaitForAssetBundleToLoad(this, name, onLoaded));
+                AddLoadingOperation(new WaitForAssetBundleToLoad(this, name, onLoaded));
             }
         }
 
         public void UnloadAll()
         {
-            foreach (var it in _assetBundles)
-                it.Value.forceUnload();
+            foreach (var it in assetBundles)
+                it.Value.ForceUnload();
             Resources.UnloadUnusedAssets();
             GC.Collect();
         }
 
-        internal IAssetBundleModel getLoadedAssetBundle(string name)
+        internal IAssetBundleModel GetLoadedAssetBundle(string name)
         {
-            var bundle = getAssetBundle(name);
+            var bundle = GetAssetBundle(name);
             if (bundle.IsLoaded)
                 return bundle;
             throw new LoadingException(string.Format("Can't get asset bundle \"{0}\" - it isn't loaded yet", name));
         }
 
-        internal void Update()
+        public void Update()
         {
-            for (var i = 0; i < _loadingOperations.Count;)
+            for (var i = 0; i < loadingOperations.Count;)
             {
-                var operation = _loadingOperations[i];
+                var operation = loadingOperations[i];
                 if (operation.Update())
                 {
                     i++;
@@ -105,18 +99,18 @@ namespace Heartcatch.Services
                 else
                 {
                     operation.Finish();
-                    _loadingOperations.RemoveAt(i);
+                    loadingOperations.RemoveAt(i);
                 }
             }
         }
 
-        internal void onAssetBundleLoaded(string name, AssetBundle assetBundle)
+        internal void OnAssetBundleLoaded(string name, AssetBundle assetBundle)
         {
             AssetBundleModel bundle;
-            if (_loadingAssetBundles.TryGetValue(name, out bundle))
+            if (loadingAssetBundles.TryGetValue(name, out bundle))
             {
-                bundle.onLoaded(assetBundle);
-                _loadingAssetBundles.Remove(name);
+                bundle.OnLoaded(assetBundle);
+                loadingAssetBundles.Remove(name);
             }
             else
             {
@@ -124,51 +118,51 @@ namespace Heartcatch.Services
             }
         }
 
-        internal void onManifestAssetBundleLoaded(AssetBundle assetBundle)
+        internal void OnManifestAssetBundleLoaded(AssetBundle assetBundle)
         {
-            addLoadingOperation(new LoadAssetOperation<AssetBundleManifest>(assetBundle,
+            AddLoadingOperation(new LoadAssetOperation<AssetBundleManifest>(assetBundle,
                 "AssetBundleManifest",
-                onAssetBundleManifestLoaded));
+                OnAssetBundleManifestLoaded));
         }
 
-        internal void onAssetBundleLoadFailed()
+        internal void OnAssetBundleLoadFailed()
         {
         }
 
-        internal bool isAssetBundleLoaded(string name)
+        internal bool IsAssetBundleLoaded(string name)
         {
-            return getAssetBundle(name).IsLoaded;
+            return GetAssetBundle(name).IsLoaded;
         }
 
-        internal void addLoadingOperation(ILoadingOperation operation)
+        internal void AddLoadingOperation(ILoadingOperation operation)
         {
-            _loadingOperations.Add(operation);
+            loadingOperations.Add(operation);
         }
 
-        private void onAssetBundleManifestLoaded(AssetBundleManifest manifest)
+        private void OnAssetBundleManifestLoaded(AssetBundleManifest manifest)
         {
             Debug.LogFormat("Manifest loaded: {0}", manifest);
-            _assetBundleManifest = manifest;
-            _assetBundles.Clear();
+            assetBundleManifest = manifest;
+            assetBundles.Clear();
             foreach (var it in manifest.GetAllAssetBundles())
-                _assetBundles.Add(it, new AssetBundleModel(this, manifest, it));
+                assetBundles.Add(it, new AssetBundleModel(this, manifest, it));
         }
 
-        internal AssetBundleModel getAssetBundle(string name)
+        internal AssetBundleModel GetAssetBundle(string name)
         {
             AssetBundleModel bundle;
-            if (_assetBundles.TryGetValue(name, out bundle))
+            if (assetBundles.TryGetValue(name, out bundle))
                 return bundle;
             throw new ArgumentException(string.Format("Asset bundle \"{0}\" doesn't exist", name));
         }
 
         internal void loadAssetBundle(string name)
         {
-            var bundle = getAssetBundle(name);
-            if (bundle.IsLoadedItself || _loadingAssetBundles.ContainsKey(name))
+            var bundle = GetAssetBundle(name);
+            if (bundle.IsLoadedItself || loadingAssetBundles.ContainsKey(name))
                 return;
-            _loadingAssetBundles.Add(name, bundle);
-            addLoadingOperation(_loaderFactory.LoadAssetBundle(name, _assetBundleManifest.GetAssetBundleHash(name)));
+            loadingAssetBundles.Add(name, bundle);
+            AddLoadingOperation(loaderFactory.LoadAssetBundle(name, assetBundleManifest.GetAssetBundleHash(name)));
         }
     }
 }

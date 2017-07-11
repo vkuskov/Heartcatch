@@ -10,9 +10,9 @@ namespace Heartcatch.Models
     [CreateAssetMenu(menuName = "XShooter/Asset Bundle")]
     public sealed class AssetBundleDescriptionModel : ScriptableObject, IAssetBundleDescriptionModel
     {
-        [SerializeField] private List<Object> _assets;
+        [SerializeField] private List<Object> assets;
 
-        [SerializeField] private bool _includeToStreamingAssets;
+        [SerializeField] private bool includeToStreamingAssets;
 
         [SerializeField] private string _name;
 
@@ -24,8 +24,8 @@ namespace Heartcatch.Models
 
         public bool IncludeToStreamingAssets
         {
-            get { return _includeToStreamingAssets; }
-            set { _includeToStreamingAssets = value; }
+            get { return includeToStreamingAssets; }
+            set { includeToStreamingAssets = value; }
         }
 
         public IEnumerable<string> GetAssetPaths()

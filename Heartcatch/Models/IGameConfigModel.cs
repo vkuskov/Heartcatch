@@ -2,7 +2,8 @@
 {
     public interface IGameConfigModel
     {
-        string AssetBundleURL { get; }
+        bool IsDevelopmentMode { get; }
+        string AssetBundleUrl { get; }
         string FirstSceneBundle { get; }
     }
 }

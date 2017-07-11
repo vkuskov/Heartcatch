@@ -5,54 +5,54 @@ namespace Heartcatch.Services
 {
     public abstract class BaseLevelLoaderService : ILevelLoaderService
     {
-        private const float FINISHED_LOADING_PROGRESS = 0.9f;
-        private bool _firstPhase;
+        private const float FinishedLoadingProgress = 0.9f;
 
-        private readonly List<AsyncOperation> _operations = new List<AsyncOperation>();
+        private readonly List<AsyncOperation> operations = new List<AsyncOperation>();
+        private bool firstPhase;
 
         public void LoadScenes(params string[] paths)
         {
-            if (_operations.Count > 0)
+            if (operations.Count > 0)
                 throw new LoadingException("Can't load new levels when previous are still loading");
             for (var i = 0; i < paths.Length; ++i)
             {
-                var operation = loadScene(paths[i], i > 0);
+                var operation = LoadScene(paths[i], i > 0);
                 operation.allowSceneActivation = false;
-                _operations.Add(operation);
+                operations.Add(operation);
             }
-            _firstPhase = true;
+            firstPhase = true;
         }
 
         public void Update()
         {
-            if (_operations.Count == 0)
+            if (operations.Count == 0)
                 return;
-            if (_firstPhase && isLoadingFinished())
+            if (firstPhase && IsLoadingFinished())
             {
-                foreach (var operation in _operations)
+                foreach (var operation in operations)
                     operation.allowSceneActivation = true;
-                _firstPhase = false;
+                firstPhase = false;
             }
-            if (!_firstPhase && isAllDone())
-                _operations.Clear();
+            if (!firstPhase && IsAllDone())
+                operations.Clear();
         }
 
-        private bool isLoadingFinished()
+        private bool IsLoadingFinished()
         {
             var result = true;
-            foreach (var operation in _operations)
-                result &= operation.progress >= FINISHED_LOADING_PROGRESS;
+            foreach (var operation in operations)
+                result &= operation.progress >= FinishedLoadingProgress;
             return result;
         }
 
-        private bool isAllDone()
+        private bool IsAllDone()
         {
             var result = true;
-            foreach (var operation in _operations)
+            foreach (var operation in operations)
                 result &= operation.isDone;
             return result;
         }
 
-        protected abstract AsyncOperation loadScene(string path, bool additive);
+        protected abstract AsyncOperation LoadScene(string path, bool additive);
     }
 }

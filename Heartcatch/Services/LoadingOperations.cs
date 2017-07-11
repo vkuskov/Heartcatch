@@ -15,113 +15,113 @@ namespace Heartcatch.Services
 
     internal sealed class WaitForAssetBundleToLoad : ILoadingOperation
     {
-        private readonly LoaderService _loaderService;
-        private readonly string _name;
-        private readonly Action<IAssetBundleModel> _onLoaded;
+        private readonly LoaderService loaderService;
+        private readonly string name;
+        private readonly Action<IAssetBundleModel> onLoaded;
 
         public WaitForAssetBundleToLoad(LoaderService loaderService, string name, Action<IAssetBundleModel> onLoaded)
         {
-            _loaderService = loaderService;
-            _name = name;
-            _onLoaded = onLoaded;
+            this.loaderService = loaderService;
+            this.name = name;
+            this.onLoaded = onLoaded;
         }
 
         public bool Update()
         {
-            return !_loaderService.isAssetBundleLoaded(_name);
+            return !loaderService.IsAssetBundleLoaded(name);
         }
 
         public void Finish()
         {
-            _onLoaded(_loaderService.getLoadedAssetBundle(_name));
+            onLoaded(loaderService.GetLoadedAssetBundle(name));
         }
     }
 
     internal abstract class BaseAssetBundleLoadOperation : ILoadingOperation
     {
-        private readonly AssetBundleCreateRequest _createRequest;
-        protected readonly LoaderService _loaderService;
+        private readonly AssetBundleCreateRequest createRequest;
+        protected readonly LoaderService LoaderService;
 
         protected BaseAssetBundleLoadOperation(LoaderService loaderService, string path)
         {
-            _loaderService = loaderService;
-            _createRequest = AssetBundle.LoadFromFileAsync(path);
+            LoaderService = loaderService;
+            createRequest = AssetBundle.LoadFromFileAsync(path);
         }
 
         public bool Update()
         {
-            return !_createRequest.isDone;
+            return !createRequest.isDone;
         }
 
         public void Finish()
         {
-            if (!_createRequest.isDone)
+            if (!createRequest.isDone)
                 throw new InvalidOperationException("Can't finish load operation that is in progress");
-            onLoaded(_createRequest.assetBundle);
+            OnLoaded(createRequest.assetBundle);
         }
 
-        protected abstract void onLoaded(AssetBundle assetBundle);
+        protected abstract void OnLoaded(AssetBundle assetBundle);
     }
 
     internal abstract class BaseAssetBundleDownloadOperation : ILoadingOperation
     {
-        protected readonly LoaderService _loaderService;
-        private readonly UnityWebRequest _request;
+        protected readonly LoaderService LoaderService;
+        private readonly UnityWebRequest request;
 
-        protected BaseAssetBundleDownloadOperation(LoaderService loaderService, string downloadURL)
+        protected BaseAssetBundleDownloadOperation(LoaderService loaderService, string downloadUrl)
         {
-            _loaderService = loaderService;
-            _request = UnityWebRequest.GetAssetBundle(downloadURL);
-            _request.Send();
+            LoaderService = loaderService;
+            request = UnityWebRequest.GetAssetBundle(downloadUrl);
+            request.Send();
         }
 
-        protected BaseAssetBundleDownloadOperation(LoaderService loaderService, string downloadURL, Hash128 hash)
+        protected BaseAssetBundleDownloadOperation(LoaderService loaderService, string downloadUrl, Hash128 hash)
         {
-            _loaderService = loaderService;
-            _request = UnityWebRequest.GetAssetBundle(downloadURL, hash, 0);
-            _request.Send();
+            LoaderService = loaderService;
+            request = UnityWebRequest.GetAssetBundle(downloadUrl, hash, 0);
+            request.Send();
         }
 
         public void Finish()
         {
-            if (!_request.isDone)
+            if (!request.isDone)
                 throw new InvalidOperationException("Can't finish download operation that is in progress");
-            if (_request.isNetworkError)
+            if (request.isNetworkError)
             {
-                Debug.LogWarningFormat("Failed to download asset bundle from {0}", _request.url);
-                onFailed();
+                Debug.LogWarningFormat("Failed to download asset bundle from {0}", request.url);
+                OnFailed();
             }
             else
             {
-                onLoaded(DownloadHandlerAssetBundle.GetContent(_request));
+                OnLoaded(DownloadHandlerAssetBundle.GetContent(request));
             }
-            _request.Dispose();
+            request.Dispose();
         }
 
         public bool Update()
         {
-            return !_request.isDone;
+            return !request.isDone;
         }
 
-        protected abstract void onLoaded(AssetBundle assetBundle);
+        protected abstract void OnLoaded(AssetBundle assetBundle);
 
-        private void onFailed()
+        private void OnFailed()
         {
-            _loaderService.onAssetBundleLoadFailed();
+            LoaderService.OnAssetBundleLoadFailed();
         }
     }
 
     internal sealed class AssetBundleManifestDownloadOperation : BaseAssetBundleDownloadOperation
     {
-        public AssetBundleManifestDownloadOperation(LoaderService loaderService, string downloadURL) : base(
+        public AssetBundleManifestDownloadOperation(LoaderService loaderService, string downloadUrl) : base(
             loaderService,
-            downloadURL)
+            downloadUrl)
         {
         }
 
-        protected override void onLoaded(AssetBundle assetBundle)
+        protected override void OnLoaded(AssetBundle assetBundle)
         {
-            _loaderService.onManifestAssetBundleLoaded(assetBundle);
+            LoaderService.OnManifestAssetBundleLoaded(assetBundle);
         }
     }
 
@@ -132,114 +132,114 @@ namespace Heartcatch.Services
         {
         }
 
-        protected override void onLoaded(AssetBundle assetBundle)
+        protected override void OnLoaded(AssetBundle assetBundle)
         {
-            _loaderService.onManifestAssetBundleLoaded(assetBundle);
+            LoaderService.OnManifestAssetBundleLoaded(assetBundle);
         }
     }
 
     internal sealed class AssetBundleDownloadOperation : BaseAssetBundleDownloadOperation
     {
-        private readonly string _assetBundleName;
+        private readonly string assetBundleName;
 
         public AssetBundleDownloadOperation(LoaderService loaderService,
             string assetBundleName,
-            string downloadURL) : base(loaderService, downloadURL)
+            string downloadUrl) : base(loaderService, downloadUrl)
         {
-            _assetBundleName = assetBundleName;
+            this.assetBundleName = assetBundleName;
         }
 
         public AssetBundleDownloadOperation(LoaderService loaderService,
             string assetBundleName,
-            string downloadURL,
+            string downloadUrl,
             Hash128 hash) : base(
             loaderService,
-            downloadURL,
+            downloadUrl,
             hash)
         {
-            _assetBundleName = assetBundleName;
+            this.assetBundleName = assetBundleName;
         }
 
-        protected override void onLoaded(AssetBundle assetBundle)
+        protected override void OnLoaded(AssetBundle assetBundle)
         {
-            _loaderService.onAssetBundleLoaded(_assetBundleName, assetBundle);
+            LoaderService.OnAssetBundleLoaded(assetBundleName, assetBundle);
         }
     }
 
     internal sealed class AssetBundleLoadOperation : BaseAssetBundleLoadOperation
     {
-        private readonly string _assetBundleName;
+        private readonly string assetBundleName;
 
         public AssetBundleLoadOperation(LoaderService loaderService, string path) : base(loaderService, path)
         {
-            _assetBundleName = Path.GetFileNameWithoutExtension(path);
+            assetBundleName = Path.GetFileNameWithoutExtension(path);
         }
 
-        protected override void onLoaded(AssetBundle assetBundle)
+        protected override void OnLoaded(AssetBundle assetBundle)
         {
-            _loaderService.onAssetBundleLoaded(_assetBundleName, assetBundle);
+            LoaderService.OnAssetBundleLoaded(assetBundleName, assetBundle);
         }
     }
 
     internal abstract class BaseAssetLoadOperation : ILoadingOperation
     {
-        protected readonly AssetBundleRequest _request;
+        protected readonly AssetBundleRequest Request;
 
         protected BaseAssetLoadOperation(AssetBundleRequest request)
         {
-            _request = request;
+            Request = request;
         }
 
         public void Finish()
         {
-            if (!_request.isDone)
+            if (!Request.isDone)
                 throw new InvalidOperationException("Can't finish loading operation that isn't done");
-            onFinish(_request);
+            OnFinish(Request);
         }
 
         public bool Update()
         {
-            return !_request.isDone;
+            return !Request.isDone;
         }
 
-        protected abstract void onFinish(AssetBundleRequest request);
+        protected abstract void OnFinish(AssetBundleRequest request);
     }
 
     internal sealed class LoadAssetOperation<T> : BaseAssetLoadOperation where T : Object
     {
-        private readonly Action<T> _onLoaded;
+        private readonly Action<T> onLoaded;
 
         public LoadAssetOperation(AssetBundle assetBundle, string name, Action<T> onLoaded) : base(assetBundle
             .LoadAssetAsync(
                 name))
         {
-            _onLoaded = onLoaded;
+            this.onLoaded = onLoaded;
         }
 
-        protected override void onFinish(AssetBundleRequest request)
+        protected override void OnFinish(AssetBundleRequest request)
         {
-            _onLoaded(request.asset as T);
+            onLoaded(request.asset as T);
         }
     }
 
     internal sealed class LoadAllAssetsOperation<T> : BaseAssetLoadOperation where T : Object
     {
-        private readonly Action<T[]> _onLoaded;
+        private readonly Action<T[]> onLoaded;
 
         public LoadAllAssetsOperation(AssetBundle assetBundle, Action<T[]> onLoaded) : base(assetBundle
             .LoadAllAssetsAsync<T
             >())
         {
-            _onLoaded = onLoaded;
+            this.onLoaded = onLoaded;
         }
 
-        protected override void onFinish(AssetBundleRequest request)
+        protected override void OnFinish(AssetBundleRequest request)
         {
             var loadedAssets = request.allAssets;
             var result = new T[loadedAssets.Length];
             for (var i = 0; i < loadedAssets.Length; i++)
                 result[i] = loadedAssets[i] as T;
-            _onLoaded(result);
+            onLoaded(result);
         }
     }
 
@@ -251,58 +251,58 @@ namespace Heartcatch.Services
 
     internal sealed class WebAssetLoaderFactory : IAssetLoaderFactory
     {
-        private readonly string _baseURL;
-        private readonly LoaderService _loaderService;
+        private readonly string baseUrl;
+        private readonly LoaderService loaderService;
 
-        public WebAssetLoaderFactory(LoaderService loaderService, string baseURL)
+        public WebAssetLoaderFactory(LoaderService loaderService, string baseUrl)
         {
-            _loaderService = loaderService;
-            _baseURL = baseURL;
+            this.loaderService = loaderService;
+            this.baseUrl = baseUrl;
         }
 
         public ILoadingOperation LoadAssetBundleManifest(string assetBundleName)
         {
-            return new AssetBundleManifestDownloadOperation(_loaderService, getURLForBundle(assetBundleName));
+            return new AssetBundleManifestDownloadOperation(loaderService, GetUrlForBundle(assetBundleName));
         }
 
         public ILoadingOperation LoadAssetBundle(string assetBundleName, Hash128 hash)
         {
-            return new AssetBundleDownloadOperation(_loaderService,
+            return new AssetBundleDownloadOperation(loaderService,
                 assetBundleName,
-                getURLForBundle(assetBundleName),
+                GetUrlForBundle(assetBundleName),
                 hash);
         }
 
-        private string getURLForBundle(string assetBundleName)
+        private string GetUrlForBundle(string assetBundleName)
         {
-            return string.Format("{0}/{1}", _baseURL, assetBundleName);
+            return string.Format("{0}/{1}", baseUrl, assetBundleName);
         }
     }
 
     internal sealed class LocalAssetLoaderFactory : IAssetLoaderFactory
     {
-        private readonly LoaderService _loaderService;
-        private readonly string _rootPath;
+        private readonly LoaderService loaderService;
+        private readonly string rootPath;
 
         public LocalAssetLoaderFactory(LoaderService loaderService, string rootPath)
         {
-            _loaderService = loaderService;
-            _rootPath = rootPath;
+            this.loaderService = loaderService;
+            this.rootPath = rootPath;
         }
 
         public ILoadingOperation LoadAssetBundleManifest(string assetBundleName)
         {
-            return new AssetBundleManifestLoadOperation(_loaderService, getBundlePath(assetBundleName));
+            return new AssetBundleManifestLoadOperation(loaderService, GetBundlePath(assetBundleName));
         }
 
         public ILoadingOperation LoadAssetBundle(string assetBundleName, Hash128 hash)
         {
-            return new AssetBundleLoadOperation(_loaderService, getBundlePath(assetBundleName));
+            return new AssetBundleLoadOperation(loaderService, GetBundlePath(assetBundleName));
         }
 
-        private string getBundlePath(string assetBundleName)
+        private string GetBundlePath(string assetBundleName)
         {
-            return Path.Combine(_rootPath, assetBundleName);
+            return Path.Combine(rootPath, assetBundleName);
         }
     }
 }

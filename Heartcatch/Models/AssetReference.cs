@@ -5,13 +5,13 @@ namespace Heartcatch.Models
     [Serializable]
     public struct AssetReference
     {
-        public string assetBundle;
-        public string assetName;
+        public string AssetBundle;
+        public string AssetName;
 
         public AssetReference(string assetBundle, string assetName)
         {
-            this.assetBundle = assetBundle;
-            this.assetName = assetName;
+            this.AssetBundle = assetBundle;
+            this.AssetName = assetName;
         }
     }
 }
