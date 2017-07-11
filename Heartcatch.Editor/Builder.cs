@@ -92,21 +92,26 @@ namespace Heartcatch.Editor
 
         public static string GetBuildTargetName(BuildTarget target)
         {
+            var config = Resources.Load<GameConfigModel>(Heartcatch.Utility.GameConfigResource);
+            if (config == null)
+            {
+                throw new BuildException(string.Format("Can't load config from resource {0}", Heartcatch.Utility.GameConfigResource));
+            }
             switch (target)
             {
                 case BuildTarget.Android:
-                    return "ShipGame.apk";
+                    return string.Format("{0}.apk", config.GameName);
                 case BuildTarget.StandaloneWindows:
                 case BuildTarget.StandaloneWindows64:
-                    return "ShipGame/ShipGame.exe";
+                    return string.Format("{0}/Game.exe", config.GameName);
                 case BuildTarget.StandaloneOSXIntel:
                 case BuildTarget.StandaloneOSXIntel64:
                 case BuildTarget.StandaloneOSXUniversal:
-                    return "ShipGame.app";
+                    return string.Format("{0}.app", config.GameName);
                 case BuildTarget.StandaloneLinux:
                 case BuildTarget.StandaloneLinuxUniversal:
                 case BuildTarget.StandaloneLinux64:
-                    return "ShipGame";
+                    return config.GameName;
                 case BuildTarget.WebGL:
                 case BuildTarget.iOS:
                     return "";
@@ -197,7 +202,7 @@ namespace Heartcatch.Editor
         public static string GetAssetBundlePath(BuildTarget target)
         {
             var platform = Utility.GetPlatformForAssetBundles(target);
-            return Path.Combine(Utility.AssetBundlesOutputPath, platform);
+            return Path.Combine(Heartcatch.Utility.AssetBundlesOutputPath, platform);
         }
 
         const string SimulationModeMenu = "Assets/AssetBundles/Simulation Mode";
@@ -205,18 +210,23 @@ namespace Heartcatch.Editor
         [MenuItem(SimulationModeMenu)]
         public static void ToggleSimulationMode()
         {
-            var simulationMode = PlayerPrefs.GetInt(Utility.AssetBundleSimulationMode, 0) != 0;
+            var simulationMode = PlayerPrefs.GetInt(Heartcatch.Utility.AssetBundleSimulationMode, 0) != 0;
             simulationMode = !simulationMode;
             var set = simulationMode ? 1 : 0;
-            PlayerPrefs.SetInt(Utility.AssetBundleSimulationMode, set);
+            PlayerPrefs.SetInt(Heartcatch.Utility.AssetBundleSimulationMode, set);
         }
 
         [MenuItem(SimulationModeMenu, true)]
         public static bool ToggleSimulationModeValidate()
         {
-            var simulationMode = PlayerPrefs.GetInt(Utility.AssetBundleSimulationMode, 0) != 0;
+            var simulationMode = PlayerPrefs.GetInt(Heartcatch.Utility.AssetBundleSimulationMode, 0) != 0;
             Menu.SetChecked(SimulationModeMenu, simulationMode);
             return !Application.isPlaying;
         }
+    }
+
+    public class BuildException : Exception
+    {
+        public BuildException(string message) : base(message) { }
     }
 }

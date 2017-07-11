@@ -8,8 +8,6 @@ namespace Heartcatch
 {
     public abstract class MainContext : SignalContext
     {
-        private const string GameConfigResource = "GameConfig";
-
         private BaseLevelLoaderService levelLoaderService;
         private LoaderService loaderService;
         private SmoothTimeService timeService;
@@ -22,7 +20,7 @@ namespace Heartcatch
         protected override void mapBindings()
         {
             base.mapBindings();
-            var gameConfig = Resources.Load<GameConfigModel>(GameConfigResource);
+            var gameConfig = Resources.Load<GameConfigModel>(Utility.GameConfigResource);
             injectionBinder.Bind<IGameConfigModel>().ToValue(gameConfig).CrossContext();
             loaderService = new LoaderService(GetServerUrl(gameConfig));
             levelLoaderService = new LevelLoaderService();

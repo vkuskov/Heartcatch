@@ -5,5 +5,6 @@
         bool IsDevelopmentMode { get; }
         string AssetBundleUrl { get; }
         string FirstSceneBundle { get; }
+        string GameName { get; }
     }
 }
