@@ -1,0 +1,57 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using Heartcatch.Design.Models;
+using UnityEditor;
+using UnityEngine;
+using Object = UnityEngine.Object;
+
+namespace Heartcatch.Editor
+{
+    [CustomEditor(typeof(AssetBundleDescriptionModel))]
+    public sealed class AssetBundleEditor : UnityEditor.Editor
+    {
+        private string newAssetName;
+        private Object newHiDefAsset;
+
+        public override void OnInspectorGUI()
+        {
+            var assetBundle = (AssetBundleDescriptionModel) target;
+            assetBundle.Name = EditorGUILayout.TextField("Bundle:", assetBundle.Name);
+            EditorGUILayout.Space();
+            GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));
+            EditorGUILayout.Space();
+            newAssetName = EditorGUILayout.TextField("Name:", this.newAssetName);
+            newHiDefAsset = EditorGUILayout.ObjectField(newHiDefAsset, typeof(GameObject), false);
+            EditorGUI.BeginDisabledGroup(string.IsNullOrEmpty(newAssetName) || newHiDefAsset == null);
+            if (GUILayout.Button("Add"))
+            {
+                assetBundle.Assets.Add(new Asset() {Name =  newAssetName, HiDefAsset = newHiDefAsset});
+                newAssetName = null;
+                newHiDefAsset = null;
+            }
+            EditorGUI.EndDisabledGroup();
+            EditorGUILayout.Space();
+            GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));
+            EditorGUILayout.Space();
+            for (int i = 0; i < assetBundle.Assets.Count;)
+            {
+                GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));
+                var asset = assetBundle.Assets[i];
+                EditorGUILayout.BeginHorizontal();
+                if (GUILayout.Button("X"))
+                {
+                    assetBundle.Assets.RemoveAt(i);
+                }
+                else
+                {
+                    i++;
+                }
+                asset.Name = EditorGUILayout.TextField("", asset.Name);
+                EditorGUILayout.EndHorizontal();
+                asset.HiDefAsset = EditorGUILayout.ObjectField(asset.HiDefAsset, typeof(GameObject), false);
+            }
+        }
+    }
+}

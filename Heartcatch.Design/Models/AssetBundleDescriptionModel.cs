@@ -7,15 +7,21 @@ namespace Heartcatch.Design.Models
     [CreateAssetMenu(menuName = "Heartcatch/Asset Bundle")]
     public sealed class AssetBundleDescriptionModel : ScriptableObject, IAssetBundleDescriptionModel
     {
-        [SerializeField] private string _name;
+        [SerializeField] private string name;
         [SerializeField] private List<Asset> assets;
 
         [SerializeField] private bool includeToStreamingAssets;
 
         public string Name
         {
-            get { return _name; }
-            set { _name = value; }
+            get { return name; }
+            set { name = value; }
+        }
+
+        public List<Asset> Assets
+        {
+            get { return assets; }
+            set { assets = value; }
         }
 
         public bool IncludeToStreamingAssets

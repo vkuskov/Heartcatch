@@ -1,7 +1,9 @@
-﻿using UnityEngine;
+﻿using System;
+using Object = UnityEngine.Object;
 
 namespace Heartcatch.Design.Models
 {
+    [Serializable]
     public struct Asset
     {
         public string Name;
