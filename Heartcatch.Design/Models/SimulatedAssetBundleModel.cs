@@ -1,49 +1,48 @@
-﻿
-#if UNITY_EDITOR
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using Heartcatch.Models;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-namespace ShipGame.Core.Models
+namespace Heartcatch.Design.Models
 {
     public sealed class SimulatedAssetBundleModel : IAssetBundleModel
     {
-        private readonly List<string> _allScenes = new List<string>();
-        private readonly string _name;
-        private readonly Dictionary<string, string> _nameToPath = new Dictionary<string, string>();
+        private readonly List<string> allScenes = new List<string>();
+        private readonly string name;
+        private readonly Dictionary<string, string> nameToPath = new Dictionary<string, string>();
 
         public SimulatedAssetBundleModel(IAssetBundleDescriptionModel description)
         {
-            _name = description.Name;
+            name = description.Name;
             foreach (var path in description.GetAssetPaths())
             {
-                if (Path.GetExtension(path) == ".unity")
-                    _allScenes.Add(path);
-                _nameToPath.Add(Path.GetFileNameWithoutExtension(path), path);
+                if (Path.GetExtension(path.HiDefAssetPath) == ".unity")
+                    allScenes.Add(path.HiDefAssetPath);
+                nameToPath.Add(path.Name, path.HiDefAssetPath);
             }
         }
 
         public void LoadAsset<T>(string name, Action<T> onLoaded) where T : Object
         {
             string path;
-            if (_nameToPath.TryGetValue(name, out path))
+            if (nameToPath.TryGetValue(name, out path))
             {
                 var asset = AssetDatabase.LoadAssetAtPath<T>(path);
                 onLoaded(asset);
             }
             else
             {
-                Debug.LogErrorFormat("Can't load asset {0} from asset bundle {1}", name, _name);
+                Debug.LogErrorFormat("Can't load asset {0} from asset bundle {1}", name, this.name);
             }
         }
 
         public void LoadAllAssets<T>(Action<T[]> onLoaded) where T : Object
         {
             var result = new List<T>();
-            foreach (var it in _nameToPath)
+            foreach (var it in nameToPath)
             {
                 var asset = AssetDatabase.LoadAssetAtPath<T>(it.Value);
                 if (asset != null)
@@ -54,7 +53,7 @@ namespace ShipGame.Core.Models
 
         public string GetScenePath(int index)
         {
-            return _allScenes[index];
+            return allScenes[index];
         }
 
         public void Unload()
@@ -62,4 +61,3 @@ namespace ShipGame.Core.Models
         }
     }
 }
-#endif // UNITY_EDITOR

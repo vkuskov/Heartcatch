@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Heartcatch.Design.Models;
 using Heartcatch.Models;
 using UnityEditor;
 using UnityEngine;
@@ -189,9 +190,30 @@ namespace Heartcatch.Editor
                 var bundle = new AssetBundleBuild();
                 Debug.LogFormat("Bundle: {0}", desc.Name);
                 bundle.assetBundleName = desc.Name;
-                bundle.assetNames = allAssets;
+                bundle.assetNames = GetAllAssetPaths(allAssets);
+                bundle.addressableNames = GetAllAddressableNames(allAssets);
                 yield return bundle;
             }
+        }
+
+        private static string[] GetAllAddressableNames(AssetPath[] paths)
+        {
+            var result = new string[paths.Length];
+            for (int i = 0; i < paths.Length; ++i)
+            {
+                result[i] = paths[i].Name;
+            }
+            return result;
+        }
+
+        private static string[] GetAllAssetPaths(AssetPath[] paths)
+        {
+            var result = new string[paths.Length];
+            for (int i = 0; i < paths.Length; ++i)
+            {
+                result[i] = paths[i].HiDefAssetPath;
+            }
+            return result;
         }
 
         public static string GetAssetBundlePathForCurrentPlatform()

@@ -1,8 +1,8 @@
-﻿
-#if UNITY_EDITOR
-using System;
+﻿using System;
 using System.Collections.Generic;
-using ShipGame.Core.Models;
+using Heartcatch.Design.Models;
+using Heartcatch.Models;
+using Heartcatch.Services;
 using UnityEditor;
 using UnityEngine;
 
@@ -51,6 +51,9 @@ namespace ShipGame.Core.Services
         public void UnloadAll()
         {
         }
+
+        public void Update()
+        {
+        }
     }
 }
-#endif
