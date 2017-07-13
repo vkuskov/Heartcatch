@@ -5,13 +5,13 @@ namespace Heartcatch.Editor
 {
     public class Tools
     {
-        [MenuItem("Tools/Clear PlayerPerfs")]
+        [MenuItem("Heartcatch/Clear PlayerPerfs", priority = 1)]
         public static void ClearPlayerPerf()
         {
             PlayerPrefs.DeleteAll();
         }
 
-        [MenuItem("Tools/Clear bundle cache")]
+        [MenuItem("Heartcatch/Clear bundle cache", priority = 2)]
         public static void ClearBundleCache()
         {
             Caching.CleanCache();

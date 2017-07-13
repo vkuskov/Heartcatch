@@ -1,13 +1,12 @@
-﻿
-#if UNITY_EDITOR
+﻿using Heartcatch.Services;
 using UnityEditor;
 using UnityEngine;
 
-namespace ShipGame.Core.Services
+namespace Heartcatch.Design.Services
 {
     public sealed class SimulatedLevelLoaderService : BaseLevelLoaderService
     {
-        protected override AsyncOperation loadScene(string path, bool additive)
+        protected override AsyncOperation LoadScene(string path, bool additive)
         {
             if (additive)
                 return EditorApplication.LoadLevelAdditiveAsyncInPlayMode(path);
@@ -15,4 +14,3 @@ namespace ShipGame.Core.Services
         }
     }
 }
-#endif

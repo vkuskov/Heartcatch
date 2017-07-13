@@ -1,11 +1,11 @@
 ﻿using System.Collections.Generic;
 
-namespace Heartcatch.Models
+namespace Heartcatch.Design.Models
 {
     public interface IAssetBundleDescriptionModel
     {
         string Name { get; }
         bool IncludeToStreamingAssets { get; }
-        IEnumerable<string> GetAssetPaths();
+        IEnumerable<AssetPath> GetAssetPaths();
     }
 }
