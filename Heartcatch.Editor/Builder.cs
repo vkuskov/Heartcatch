@@ -13,13 +13,21 @@ namespace Heartcatch.Editor
     {
         public const string Build = "Build";
 
-        [MenuItem("Assets/AssetBundles/Build Bundles")]
+        [MenuItem("Heartcatch/Build Remote Bundles", priority = 100)]
         public static void BuildBundlesForCurrentPlatform()
         {
             BuildBundles(EditorUserBuildSettings.activeBuildTarget, false);
         }
 
-        [MenuItem("Assets/AssetBundles/Build Dev")]
+        [MenuItem("Heartcatch/Build Local Bundles", priority = 101)]
+        public static void BuildLocalBundlesForCurrentPlatform()
+        {
+            BuildBundles(EditorUserBuildSettings.activeBuildTarget, true);
+            CopyAssetBundlesToStreamingAssets(GetAssetBundlePath(EditorUserBuildSettings.activeBuildTarget), true);
+
+        }
+
+        [MenuItem("Heartcatch/Build Dev (Remote bundles)", priority = 200)]
         public static void BuildGameForCurrentPlatform()
         {
             BuildGame(EditorUserBuildSettings.activeBuildTarget, true, false);
@@ -30,13 +38,9 @@ namespace Heartcatch.Editor
             BuildGame(EditorUserBuildSettings.activeBuildTarget, false, false);
         }
 
-        [MenuItem("Assets/AssetBundles/Build Release")]
+        [MenuItem("Heartcatch/Build Release", priority = 201)]
         public static void BuildReleaseForCurrentPlatform()
         {
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup,
-                "RELEASE_BUILD");
-            PlayerSettings.SetScriptingDefineSymbolsForGroup(EditorUserBuildSettings.selectedBuildTargetGroup,
-                "LOCAL_BUNDLES");
             BuildGame(EditorUserBuildSettings.activeBuildTarget, true, true);
         }
 
@@ -122,19 +126,19 @@ namespace Heartcatch.Editor
             }
         }
 
-        private static void CopyAssetBundlesToStreamingAssets(string path, bool fullCopy)
+        private static void CopyAssetBundlesToStreamingAssets(string sourcePath, bool fullCopy)
         {
             if (Directory.Exists(Application.streamingAssetsPath))
             {
                 Directory.Delete(Application.streamingAssetsPath, true);
             }
-            var fullPath = Path.Combine(Application.streamingAssetsPath, path);
+            var fullPath = Path.Combine(Application.streamingAssetsPath, sourcePath);
             Directory.CreateDirectory(fullPath);
             foreach (var it in GetAssetsForStreamingAssets(fullCopy))
             {
-                CopySingleBundle(path, fullPath, it);
+                CopySingleBundle(sourcePath, fullPath, it);
             }
-            CopySingleBundle(path, fullPath, Utility.GetPlatformName());
+            CopySingleBundle(sourcePath, fullPath, Utility.GetPlatformName());
         }
 
         private static void CopySingleBundle(string source, string destination, string name)
@@ -227,9 +231,9 @@ namespace Heartcatch.Editor
             return Path.Combine(Heartcatch.Utility.AssetBundlesOutputPath, platform);
         }
 
-        const string SimulationModeMenu = "Assets/AssetBundles/Simulation Mode";
+        const string SimulationModeMenu = "Heartcatch/Simulation Mode";
 
-        [MenuItem(SimulationModeMenu)]
+        [MenuItem(SimulationModeMenu, priority = 10000)]
         public static void ToggleSimulationMode()
         {
             var simulationMode = PlayerPrefs.GetInt(Heartcatch.Utility.AssetBundleSimulationMode, 0) != 0;
