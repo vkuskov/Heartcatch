@@ -12,6 +12,7 @@ namespace Heartcatch
         public const string AssetBundlesOutputPath = "AssetBundles";
         public const string AssetBundleSimulationMode = "__assetBundleSimulation";
         public const string GameConfigResource = "GameConfig";
+        public const string RunnerResource = "Runner";
 
         public static string GetPlatformName()
         {
