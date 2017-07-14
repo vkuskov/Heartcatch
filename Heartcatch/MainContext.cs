@@ -2,6 +2,8 @@
 using System.Net.Sockets;
 using Heartcatch.Models;
 using Heartcatch.Services;
+using strange.extensions.pool.api;
+using strange.extensions.pool.impl;
 using UnityEngine;
 
 namespace Heartcatch
@@ -31,6 +33,10 @@ namespace Heartcatch
             timeService = new SmoothTimeService();
             injectionBinder.Bind<IUpdateService>().ToValue(updateService).CrossContext();
             injectionBinder.Bind<ITimeService>().ToValue(timeService).CrossContext();
+            injectionBinder.Bind<IResourceLoaderService>().To<ResourceLoaderService>().ToSingleton().CrossContext();
+
+            injectionBinder.Bind<IPool<ResourceRequestModel>>().To<Pool<ResourceRequestModel>>().ToSingleton();
+
             injectionBinder.Bind<AssetsReadySignal>().ToSingleton().CrossContext();
         }
 
