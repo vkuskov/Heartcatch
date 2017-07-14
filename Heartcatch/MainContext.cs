@@ -10,8 +10,8 @@ namespace Heartcatch
 {
     public abstract class MainContext : SignalContext
     {
-        private BaseLevelLoaderService levelLoaderService;
-        private LoaderService loaderService;
+        private ILevelLoaderService levelLoaderService;
+        private ILoaderService baseLoaderService;
         private SmoothTimeService timeService;
         private UpdateService updateService;
 
@@ -24,9 +24,9 @@ namespace Heartcatch
             base.mapBindings();
             var gameConfig = Resources.Load<GameConfigModel>(Utility.GameConfigResource);
             injectionBinder.Bind<IGameConfigModel>().ToValue(gameConfig).CrossContext();
-            loaderService = new LoaderService(GetServerUrl(gameConfig));
-            levelLoaderService = new LevelLoaderService();
-            injectionBinder.Bind<ILoaderService>().ToValue(loaderService).CrossContext();
+            baseLoaderService = CreateLoaderService(gameConfig);
+            levelLoaderService = CreateLevelLoaderService();
+            injectionBinder.Bind<ILoaderService>().ToValue(baseLoaderService).CrossContext();
             injectionBinder.Bind<ILevelLoaderService>().ToValue(levelLoaderService);
 
             updateService = new UpdateService();
@@ -53,8 +53,8 @@ namespace Heartcatch
         {
             timeService.Update(Time.deltaTime);
             levelLoaderService.Update();
-            if (loaderService != null)
-                loaderService.Update();
+            if (baseLoaderService != null)
+                baseLoaderService.Update();
             updateService.Update();
         }
 
@@ -64,7 +64,7 @@ namespace Heartcatch
             signal.Dispatch();
         }
 
-        private bool UseSimuationMode()
+        protected bool UseSimuationMode()
         {
             return PlayerPrefs.GetInt(Utility.AssetBundleSimulationMode, 0) != 0;
         }

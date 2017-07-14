@@ -8,15 +8,15 @@ namespace Heartcatch.Models
     public sealed class AssetBundleModel : IAssetBundleModel
     {
         private readonly string[] dependencies;
-        private readonly LoaderService loaderService;
+        private readonly BaseLoaderService baseLoaderService;
         private readonly string name;
         private AssetBundle assetBundle;
         private int referenceCount;
 
-        public AssetBundleModel(LoaderService loaderService, AssetBundleManifest manifest, string name)
+        public AssetBundleModel(BaseLoaderService baseLoaderService, AssetBundleManifest manifest, string name)
         {
             this.name = name;
-            this.loaderService = loaderService;
+            this.baseLoaderService = baseLoaderService;
             referenceCount = 0;
             dependencies = manifest.GetDirectDependencies(name);
         }
@@ -28,13 +28,13 @@ namespace Heartcatch.Models
         public void LoadAsset<T>(string name, Action<T> onLoaded) where T : Object
         {
             CheckIfLoaded();
-            loaderService.AddLoadingOperation(new LoadAssetOperation<T>(assetBundle, name, onLoaded));
+            baseLoaderService.AddLoadingOperation(new LoadAssetOperation<T>(assetBundle, name, onLoaded));
         }
 
         public void LoadAllAssets<T>(Action<T[]> onLoaded) where T : Object
         {
             CheckIfLoaded();
-            loaderService.AddLoadingOperation(new LoadAllAssetsOperation<T>(assetBundle, onLoaded));
+            baseLoaderService.AddLoadingOperation(new LoadAllAssetsOperation<T>(assetBundle, onLoaded));
         }
 
         public string GetScenePath(int index)
@@ -52,7 +52,7 @@ namespace Heartcatch.Models
                 assetBundle.Unload(true);
                 assetBundle = null;
                 foreach (var it in dependencies)
-                    loaderService.GetAssetBundle(it).Unload();
+                    baseLoaderService.GetAssetBundle(it).Unload();
             }
         }
 
@@ -63,7 +63,7 @@ namespace Heartcatch.Models
             this.assetBundle = assetBundle;
             referenceCount = 1;
             foreach (var it in dependencies)
-                loaderService.loadAssetBundle(it);
+                baseLoaderService.loadAssetBundle(it);
         }
 
         internal void AddReference()
@@ -93,7 +93,7 @@ namespace Heartcatch.Models
         private bool IsAllDependenciesLoaded()
         {
             foreach (var it in dependencies)
-                if (!loaderService.IsAssetBundleLoaded(it))
+                if (!baseLoaderService.IsAssetBundleLoaded(it))
                     return false;
             return true;
         }

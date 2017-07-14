@@ -69,8 +69,10 @@
     <Compile Include="Services\ITimeService.cs" />
     <Compile Include="Services\IUpdateService.cs" />
     <Compile Include="Services\LevelLoaderService.cs" />
-    <Compile Include="Services\LoaderService.cs" />
+    <Compile Include="Services\BaseLoaderService.cs" />
     <Compile Include="Services\LoadingOperations.cs" />
+    <Compile Include="Services\LocalLoaderService.cs" />
+    <Compile Include="Services\RemoteLoaderService.cs" />
     <Compile Include="Services\ResourceLoaderService.cs" />
     <Compile Include="Services\SmoothTimeService.cs" />
     <Compile Include="Services\UpdateService.cs" />

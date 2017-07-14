@@ -5,36 +5,26 @@ using UnityEngine;
 
 namespace Heartcatch.Services
 {
-    public sealed class LoaderService : ILoaderService
+    public abstract class BaseLoaderService : ILoaderService
     {
-        private readonly Dictionary<string, AssetBundleModel> assetBundles = new Dictionary<string, AssetBundleModel>()
-            ;
+        private readonly Dictionary<string, AssetBundleModel> assetBundles = new Dictionary<string, AssetBundleModel>();
 
-        private readonly string baseUrl;
-        private readonly IAssetLoaderFactory loaderFactory;
 
         private readonly Dictionary<string, AssetBundleModel> loadingAssetBundles =
             new Dictionary<string, AssetBundleModel>();
 
+        private IAssetLoaderFactory loaderFactory;
         private readonly List<ILoadingOperation> loadingOperations = new List<ILoadingOperation>();
         private AssetBundleManifest assetBundleManifest;
 
-        public LoaderService(string url)
+        [PostConstruct]
+        public void Init()
         {
-            baseUrl = url;
-
-#if LOCAL_BUNDLES
-            var path = Path.Combine(Application.streamingAssetsPath,
-                                    Path.Combine(Utility.ASSET_BUNDLES_OUTPUT_PATH, Utility.GetPlatformName()));
-            Debug.LogFormat("Base path: {0}", path);
-            _loaderFactory = new LocalAssetLoaderFactory(this, path);
-#else
-            Debug.LogFormat("Base URL: {0}", baseUrl);
-            loaderFactory = new WebAssetLoaderFactory(this, url);
-#endif
-
+            loaderFactory = CreateAssetLoaderFactory();
             AddLoadingOperation(loaderFactory.LoadAssetBundleManifest(Utility.GetPlatformName()));
         }
+
+        protected abstract IAssetLoaderFactory CreateAssetLoaderFactory();
 
         public bool IsLoading => loadingOperations.Count > 0;
 
