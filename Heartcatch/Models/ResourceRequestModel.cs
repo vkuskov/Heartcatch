@@ -25,12 +25,17 @@ namespace Heartcatch.Models
             }
         }
 
-        public Object GetResource(string name)
+        public T GetResource<T>(string name) where T : Object
         {
             Object result;
             if (loadedResources.TryGetValue(name, out result))
             {
-                return result;
+                var realResult = result as T;
+                if (realResult != null)
+                {
+                    return realResult;
+                }
+                throw new Exception(string.Format("Resource {0} excepted to be {1} but it's {2}", name, typeof(T), result.GetType()));
             }
             throw new Exception(string.Format("Resource {0} wasn't loaded", name));
         }

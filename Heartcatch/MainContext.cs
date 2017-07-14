@@ -35,6 +35,7 @@ namespace Heartcatch
             injectionBinder.Bind<ITimeService>().ToValue(timeService).CrossContext();
             injectionBinder.Bind<IResourceLoaderService>().To<ResourceLoaderService>().ToSingleton().CrossContext();
 
+            injectionBinder.Bind<ResourceRequestModel>().To<ResourceRequestModel>();
             injectionBinder.Bind<IPool<ResourceRequestModel>>().To<Pool<ResourceRequestModel>>().ToSingleton();
 
             injectionBinder.Bind<AssetsReadySignal>().ToSingleton().CrossContext();

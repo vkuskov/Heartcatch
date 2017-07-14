@@ -10,6 +10,6 @@ namespace Heartcatch.Models
     public interface IResourceRequestModel
     {
         void RequestResource(string name, AssetReference assetReference);
-        Object GetResource(string name);
+        T GetResource<T>(string name) where T : Object;
     }
 }

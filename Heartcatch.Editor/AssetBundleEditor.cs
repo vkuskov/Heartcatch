@@ -28,6 +28,7 @@ namespace Heartcatch.Editor
             if (GUILayout.Button("Add"))
             {
                 assetBundle.Assets.Add(new Asset() {Name =  newAssetName, HiDefAsset = newHiDefAsset});
+                EditorUtility.SetDirty(assetBundle);
                 newAssetName = null;
                 newHiDefAsset = null;
             }
@@ -40,7 +41,17 @@ namespace Heartcatch.Editor
                 GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));
                 var asset = assetBundle.Assets[i];
                 EditorGUILayout.BeginHorizontal();
-                if (GUILayout.Button("X"))
+                bool toRemove = GUILayout.Button("X");
+                EditorGUI.BeginChangeCheck();
+                asset.Name = EditorGUILayout.TextField("", asset.Name);
+                EditorGUILayout.EndHorizontal();
+                asset.HiDefAsset = EditorGUILayout.ObjectField(asset.HiDefAsset, typeof(GameObject), false);
+                if (EditorGUI.EndChangeCheck())
+                {
+                    assetBundle.Assets[i] = asset;
+                    EditorUtility.SetDirty(assetBundle);
+                }
+                if (toRemove)
                 {
                     assetBundle.Assets.RemoveAt(i);
                 }
@@ -48,9 +59,6 @@ namespace Heartcatch.Editor
                 {
                     i++;
                 }
-                asset.Name = EditorGUILayout.TextField("", asset.Name);
-                EditorGUILayout.EndHorizontal();
-                asset.HiDefAsset = EditorGUILayout.ObjectField(asset.HiDefAsset, typeof(GameObject), false);
             }
         }
     }
