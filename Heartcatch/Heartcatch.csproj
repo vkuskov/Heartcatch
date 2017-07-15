@@ -43,6 +43,9 @@
     <Reference Include="UnityEngine">
       <HintPath>..\Deps\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>..\Deps\UnityEngine.UI.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\AssetBundleCachePrime.cs" />
@@ -77,6 +80,19 @@
     <Compile Include="Core\SignalContext.cs" />
     <Compile Include="Core\Signals.cs" />
     <Compile Include="Core\Utility.cs" />
+    <Compile Include="UI\Models\IScreenModel.cs" />
+    <Compile Include="UI\Models\IUIConfigModel.cs" />
+    <Compile Include="UI\Models\UIConfigModel.cs" />
+    <Compile Include="UI\Services\IScreenManagerService.cs" />
+    <Compile Include="UI\Services\IUISoundService.cs" />
+    <Compile Include="UI\Services\ScreenManagerService.cs" />
+    <Compile Include="UI\Services\UISoundService.cs" />
+    <Compile Include="UI\UIContext.cs" />
+    <Compile Include="UI\UIContextView.cs" />
+    <Compile Include="UI\View\ButtonClick.cs" />
+    <Compile Include="UI\View\IUISoundPlayer.cs" />
+    <Compile Include="UI\View\ScreenView.cs" />
+    <Compile Include="UI\View\UISoundManager.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

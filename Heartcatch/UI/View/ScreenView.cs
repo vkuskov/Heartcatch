@@ -91,7 +91,6 @@ namespace Heartcatch.UI.View
                 else
                 {
                     screenState = ScreenState.Hidden;
-                    OnScreenHide();
                 }
             }
             else
@@ -103,7 +102,6 @@ namespace Heartcatch.UI.View
                 else
                 {
                     screenState = ScreenState.Active;
-                    OnScreenShow();
                 }
             }
         }
@@ -153,16 +151,6 @@ namespace Heartcatch.UI.View
         protected virtual void OnScreenRemoved()
         {
             gameObject.SetActive(false);
-        }
-
-        protected virtual void OnScreenHide()
-        {
-            gameObject.SetActive(false);
-        }
-
-        protected virtual void OnScreenShow()
-        {
-            gameObject.SetActive(true);
         }
 
         protected virtual void OnAttached(IScreenManagerService screenManagerService)
