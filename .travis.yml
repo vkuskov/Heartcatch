@@ -1,3 +1,2 @@
 language: csharp
-script:
-- ./Scripts/build
+solution: Heartcatch.sln

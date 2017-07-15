@@ -19,7 +19,8 @@ namespace Heartcatch.Core.Services
         private readonly string name;
         private readonly Action<IAssetBundleModel> onLoaded;
 
-        public WaitForAssetBundleToLoad(BaseLoaderService baseLoaderService, string name, Action<IAssetBundleModel> onLoaded)
+        public WaitForAssetBundleToLoad(BaseLoaderService baseLoaderService, string name,
+            Action<IAssetBundleModel> onLoaded)
         {
             this.baseLoaderService = baseLoaderService;
             this.name = name;
@@ -39,8 +40,8 @@ namespace Heartcatch.Core.Services
 
     internal abstract class BaseAssetBundleLoadOperation : ILoadingOperation
     {
-        private readonly AssetBundleCreateRequest createRequest;
         protected readonly BaseLoaderService BaseLoaderService;
+        private readonly AssetBundleCreateRequest createRequest;
 
         protected BaseAssetBundleLoadOperation(BaseLoaderService baseLoaderService, string path)
         {
@@ -75,7 +76,8 @@ namespace Heartcatch.Core.Services
             request.Send();
         }
 
-        protected BaseAssetBundleDownloadOperation(BaseLoaderService baseLoaderService, string downloadUrl, Hash128 hash)
+        protected BaseAssetBundleDownloadOperation(BaseLoaderService baseLoaderService, string downloadUrl,
+            Hash128 hash)
         {
             BaseLoaderService = baseLoaderService;
             request = UnityWebRequest.GetAssetBundle(downloadUrl, hash, 0);
@@ -170,7 +172,8 @@ namespace Heartcatch.Core.Services
     {
         private readonly string assetBundleName;
 
-        public AssetBundleLoadOperation(BaseLoaderService baseLoaderService, string path) : base(baseLoaderService, path)
+        public AssetBundleLoadOperation(BaseLoaderService baseLoaderService, string path) : base(baseLoaderService,
+            path)
         {
             assetBundleName = Path.GetFileNameWithoutExtension(path);
         }
@@ -251,8 +254,8 @@ namespace Heartcatch.Core.Services
 
     internal sealed class WebAssetLoaderFactory : IAssetLoaderFactory
     {
-        private readonly string baseUrl;
         private readonly BaseLoaderService baseLoaderService;
+        private readonly string baseUrl;
 
         public WebAssetLoaderFactory(BaseLoaderService baseLoaderService, string baseUrl)
         {

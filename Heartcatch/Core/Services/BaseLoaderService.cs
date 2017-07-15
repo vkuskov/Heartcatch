@@ -13,18 +13,10 @@ namespace Heartcatch.Core.Services
         private readonly Dictionary<string, AssetBundleModel> loadingAssetBundles =
             new Dictionary<string, AssetBundleModel>();
 
-        private IAssetLoaderFactory loaderFactory;
         private readonly List<ILoadingOperation> loadingOperations = new List<ILoadingOperation>();
         private AssetBundleManifest assetBundleManifest;
 
-        [PostConstruct]
-        public void Init()
-        {
-            loaderFactory = CreateAssetLoaderFactory();
-            AddLoadingOperation(loaderFactory.LoadAssetBundleManifest(Utility.GetPlatformName()));
-        }
-
-        protected abstract IAssetLoaderFactory CreateAssetLoaderFactory();
+        private IAssetLoaderFactory loaderFactory;
 
         public bool IsLoading => loadingOperations.Count > 0;
 
@@ -69,14 +61,6 @@ namespace Heartcatch.Core.Services
             GC.Collect();
         }
 
-        internal IAssetBundleModel GetLoadedAssetBundle(string name)
-        {
-            var bundle = GetAssetBundle(name);
-            if (bundle.IsLoaded)
-                return bundle;
-            throw new LoadingException(string.Format("Can't get asset bundle \"{0}\" - it isn't loaded yet", name));
-        }
-
         public void Update()
         {
             for (var i = 0; i < loadingOperations.Count;)
@@ -92,6 +76,23 @@ namespace Heartcatch.Core.Services
                     loadingOperations.RemoveAt(i);
                 }
             }
+        }
+
+        [PostConstruct]
+        public void Init()
+        {
+            loaderFactory = CreateAssetLoaderFactory();
+            AddLoadingOperation(loaderFactory.LoadAssetBundleManifest(Utility.GetPlatformName()));
+        }
+
+        protected abstract IAssetLoaderFactory CreateAssetLoaderFactory();
+
+        internal IAssetBundleModel GetLoadedAssetBundle(string name)
+        {
+            var bundle = GetAssetBundle(name);
+            if (bundle.IsLoaded)
+                return bundle;
+            throw new LoadingException(string.Format("Can't get asset bundle \"{0}\" - it isn't loaded yet", name));
         }
 
         internal void OnAssetBundleLoaded(string name, AssetBundle assetBundle)

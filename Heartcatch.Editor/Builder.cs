@@ -13,6 +13,8 @@ namespace Heartcatch.Editor
     {
         public const string Build = "Build";
 
+        private const string SimulationModeMenu = "Heartcatch/Simulation Mode";
+
         [MenuItem("Heartcatch/Build Remote Bundles", priority = 100)]
         public static void BuildBundlesForCurrentPlatform()
         {
@@ -24,7 +26,6 @@ namespace Heartcatch.Editor
         {
             BuildBundles(EditorUserBuildSettings.activeBuildTarget, true);
             CopyAssetBundlesToStreamingAssets(GetAssetBundlePath(EditorUserBuildSettings.activeBuildTarget), true);
-
         }
 
         [MenuItem("Heartcatch/Build Dev (Remote bundles)", priority = 200)]
@@ -51,7 +52,7 @@ namespace Heartcatch.Editor
 
         public static void BuildCi(BuildTarget target)
         {
-            BuildPlayerOptions options = new BuildPlayerOptions
+            var options = new BuildPlayerOptions
             {
                 target = target,
                 locationPathName = Path.Combine(Build, GetBuildTargetName(target)),
@@ -68,11 +69,9 @@ namespace Heartcatch.Editor
             {
                 var manifest = BuildBundles(target, localBuild);
                 if (manifest != null)
-                {
                     CopyAssetBundlesToStreamingAssets(assetBundlePath, localBuild);
-                }
             }
-            BuildPlayerOptions options = new BuildPlayerOptions
+            var options = new BuildPlayerOptions
             {
                 target = target,
                 assetBundleManifestPath = Path.Combine(assetBundlePath, Utility.GetPlatformName()),
@@ -85,12 +84,10 @@ namespace Heartcatch.Editor
 
         private static string[] GetScenesToBuild()
         {
-            List<string> levels = new List<string>();
-            for (int i = 0; i < EditorBuildSettings.scenes.Length; ++i)
-            {
+            var levels = new List<string>();
+            for (var i = 0; i < EditorBuildSettings.scenes.Length; ++i)
                 if (EditorBuildSettings.scenes[i].enabled)
                     levels.Add(EditorBuildSettings.scenes[i].path);
-            }
 
             return levels.ToArray();
         }
@@ -99,9 +96,8 @@ namespace Heartcatch.Editor
         {
             var config = Resources.Load<GameConfigModel>(Core.Utility.GameConfigResource);
             if (config == null)
-            {
-                throw new BuildException(string.Format("Can't load config from resource {0}", Core.Utility.GameConfigResource));
-            }
+                throw new BuildException(string.Format("Can't load config from resource {0}",
+                    Core.Utility.GameConfigResource));
             switch (target)
             {
                 case BuildTarget.Android:
@@ -129,15 +125,11 @@ namespace Heartcatch.Editor
         private static void CopyAssetBundlesToStreamingAssets(string sourcePath, bool fullCopy)
         {
             if (Directory.Exists(Application.streamingAssetsPath))
-            {
                 Directory.Delete(Application.streamingAssetsPath, true);
-            }
             var fullPath = Path.Combine(Application.streamingAssetsPath, sourcePath);
             Directory.CreateDirectory(fullPath);
             foreach (var it in GetAssetsForStreamingAssets(fullCopy))
-            {
                 CopySingleBundle(sourcePath, fullPath, it);
-            }
             CopySingleBundle(sourcePath, fullPath, Utility.GetPlatformName());
         }
 
@@ -156,9 +148,7 @@ namespace Heartcatch.Editor
                 var path = AssetDatabase.GUIDToAssetPath(guid);
                 var desc = AssetDatabase.LoadAssetAtPath<AssetBundleDescriptionModel>(path);
                 if (fullCopy || desc.IncludeToStreamingAssets)
-                {
                     yield return desc.Name;
-                }
             }
         }
 
@@ -170,13 +160,9 @@ namespace Heartcatch.Editor
             var bundles = GetAssetBundlesToBuild().ToArray();
             var options = BuildAssetBundleOptions.StrictMode;
             if (target == BuildTarget.WebGL)
-            {
                 options |= BuildAssetBundleOptions.UncompressedAssetBundle;
-            }
             else if (preferLz4)
-            {
                 options |= BuildAssetBundleOptions.ChunkBasedCompression;
-            }
             return BuildPipeline.BuildAssetBundles(path,
                 bundles,
                 options,
@@ -203,20 +189,16 @@ namespace Heartcatch.Editor
         private static string[] GetAllAddressableNames(AssetPath[] paths)
         {
             var result = new string[paths.Length];
-            for (int i = 0; i < paths.Length; ++i)
-            {
+            for (var i = 0; i < paths.Length; ++i)
                 result[i] = paths[i].Name;
-            }
             return result;
         }
 
         private static string[] GetAllAssetPaths(AssetPath[] paths)
         {
             var result = new string[paths.Length];
-            for (int i = 0; i < paths.Length; ++i)
-            {
+            for (var i = 0; i < paths.Length; ++i)
                 result[i] = paths[i].HiDefAssetPath;
-            }
             return result;
         }
 
@@ -230,8 +212,6 @@ namespace Heartcatch.Editor
             var platform = Utility.GetPlatformForAssetBundles(target);
             return Path.Combine(Core.Utility.AssetBundlesOutputPath, platform);
         }
-
-        const string SimulationModeMenu = "Heartcatch/Simulation Mode";
 
         [MenuItem(SimulationModeMenu, priority = 10000)]
         public static void ToggleSimulationMode()
@@ -253,6 +233,8 @@ namespace Heartcatch.Editor
 
     public class BuildException : Exception
     {
-        public BuildException(string message) : base(message) { }
+        public BuildException(string message) : base(message)
+        {
+        }
     }
 }

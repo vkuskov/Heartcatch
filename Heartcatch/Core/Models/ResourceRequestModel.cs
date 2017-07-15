@@ -1,23 +1,21 @@
 ﻿using System.Collections.Generic;
-using Object = UnityEngine.Object;
+using UnityEngine;
 
 namespace Heartcatch.Core.Models
 {
     public sealed class ResourceRequestModel : IResourceRequestModel
     {
-        private Dictionary<string, AssetReference> requestedResources = new Dictionary<string, AssetReference>();
-        private Dictionary<string, Object> loadedResources = new Dictionary<string, Object>();
+        private readonly Dictionary<string, Object> loadedResources = new Dictionary<string, Object>();
+
+        private readonly Dictionary<string, AssetReference> requestedResources =
+            new Dictionary<string, AssetReference>();
 
         public void RequestResource(string name, AssetReference assetReference)
         {
             if (!requestedResources.ContainsKey(name))
-            {
                 requestedResources.Add(name, assetReference);
-            }
             else
-            {
                 throw new Exception(string.Format("Resource {0} is already requested", name));
-            }
         }
 
         public T GetResource<T>(string name) where T : Object
@@ -27,10 +25,9 @@ namespace Heartcatch.Core.Models
             {
                 var realResult = result as T;
                 if (realResult != null)
-                {
                     return realResult;
-                }
-                throw new Exception(string.Format("Resource {0} excepted to be {1} but it's {2}", name, typeof(T), result.GetType()));
+                throw new Exception(string.Format("Resource {0} excepted to be {1} but it's {2}", name, typeof(T),
+                    result.GetType()));
             }
             throw new Exception(string.Format("Resource {0} wasn't loaded", name));
         }

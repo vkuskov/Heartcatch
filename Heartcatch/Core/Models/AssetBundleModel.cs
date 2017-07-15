@@ -7,8 +7,8 @@ namespace Heartcatch.Core.Models
 {
     public sealed class AssetBundleModel : IAssetBundleModel
     {
-        private readonly string[] dependencies;
         private readonly BaseLoaderService baseLoaderService;
+        private readonly string[] dependencies;
         private readonly string name;
         private AssetBundle assetBundle;
         private int referenceCount;

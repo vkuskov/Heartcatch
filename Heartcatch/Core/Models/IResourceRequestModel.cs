@@ -1,4 +1,4 @@
-﻿using Object = UnityEngine.Object;
+﻿using UnityEngine;
 
 namespace Heartcatch.Core.Models
 {

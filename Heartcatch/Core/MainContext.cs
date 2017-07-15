@@ -10,8 +10,8 @@ namespace Heartcatch.Core
 {
     public abstract class MainContext : SignalContext
     {
-        private ILevelLoaderService levelLoaderService;
         private ILoaderService baseLoaderService;
+        private ILevelLoaderService levelLoaderService;
         private SmoothTimeService timeService;
         private UpdateService updateService;
 

@@ -10,8 +10,8 @@ namespace Heartcatch.Core.Models
 
         public AssetReference(string assetBundle, string assetName)
         {
-            this.AssetBundle = assetBundle;
-            this.AssetName = assetName;
+            AssetBundle = assetBundle;
+            AssetName = assetName;
         }
     }
 }

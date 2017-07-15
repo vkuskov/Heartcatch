@@ -4,10 +4,9 @@ namespace Heartcatch.Core.Services
 {
     public sealed class UpdateService : IUpdateService
     {
-        private readonly List<Data> toSubscribe = new List<Data>();
-
         private readonly DataSorter sorter = new DataSorter();
         private readonly List<IUpdateable> toRemove = new List<IUpdateable>();
+        private readonly List<Data> toSubscribe = new List<Data>();
 
         private readonly List<Data> updateables = new List<Data>();
 
