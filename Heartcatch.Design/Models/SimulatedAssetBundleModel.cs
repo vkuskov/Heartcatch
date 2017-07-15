@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using Heartcatch.Models;
+using Heartcatch.Core.Models;
 using UnityEditor;
 using UnityEngine;
 using Object = UnityEngine.Object;

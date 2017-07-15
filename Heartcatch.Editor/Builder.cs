@@ -2,8 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Heartcatch.Core.Models;
 using Heartcatch.Design.Models;
-using Heartcatch.Models;
 using UnityEditor;
 using UnityEngine;
 
@@ -97,10 +97,10 @@ namespace Heartcatch.Editor
 
         public static string GetBuildTargetName(BuildTarget target)
         {
-            var config = Resources.Load<GameConfigModel>(Heartcatch.Utility.GameConfigResource);
+            var config = Resources.Load<GameConfigModel>(Core.Utility.GameConfigResource);
             if (config == null)
             {
-                throw new BuildException(string.Format("Can't load config from resource {0}", Heartcatch.Utility.GameConfigResource));
+                throw new BuildException(string.Format("Can't load config from resource {0}", Core.Utility.GameConfigResource));
             }
             switch (target)
             {
@@ -228,7 +228,7 @@ namespace Heartcatch.Editor
         public static string GetAssetBundlePath(BuildTarget target)
         {
             var platform = Utility.GetPlatformForAssetBundles(target);
-            return Path.Combine(Heartcatch.Utility.AssetBundlesOutputPath, platform);
+            return Path.Combine(Core.Utility.AssetBundlesOutputPath, platform);
         }
 
         const string SimulationModeMenu = "Heartcatch/Simulation Mode";
@@ -236,16 +236,16 @@ namespace Heartcatch.Editor
         [MenuItem(SimulationModeMenu, priority = 10000)]
         public static void ToggleSimulationMode()
         {
-            var simulationMode = PlayerPrefs.GetInt(Heartcatch.Utility.AssetBundleSimulationMode, 0) != 0;
+            var simulationMode = PlayerPrefs.GetInt(Core.Utility.AssetBundleSimulationMode, 0) != 0;
             simulationMode = !simulationMode;
             var set = simulationMode ? 1 : 0;
-            PlayerPrefs.SetInt(Heartcatch.Utility.AssetBundleSimulationMode, set);
+            PlayerPrefs.SetInt(Core.Utility.AssetBundleSimulationMode, set);
         }
 
         [MenuItem(SimulationModeMenu, true)]
         public static bool ToggleSimulationModeValidate()
         {
-            var simulationMode = PlayerPrefs.GetInt(Heartcatch.Utility.AssetBundleSimulationMode, 0) != 0;
+            var simulationMode = PlayerPrefs.GetInt(Core.Utility.AssetBundleSimulationMode, 0) != 0;
             Menu.SetChecked(SimulationModeMenu, simulationMode);
             return !Application.isPlaying;
         }

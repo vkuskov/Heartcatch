@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Heartcatch.Core.Models;
+using Heartcatch.Core.Services;
 using Heartcatch.Design.Models;
-using Heartcatch.Models;
-using Heartcatch.Services;
 using UnityEditor;
 using UnityEngine;
 
-namespace ShipGame.Core.Services
+namespace Heartcatch.Design.Services
 {
     public sealed class SimulatedLoaderService : ILoaderService
     {
