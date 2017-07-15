@@ -86,7 +86,7 @@ namespace Heartcatch.Core.Services
         {
             if (!request.isDone)
                 throw new InvalidOperationException("Can't finish download operation that is in progress");
-            if (request.isNetworkError)
+            if (request.isNetworkError || request.isHttpError)
             {
                 Debug.LogWarningFormat("Failed to download asset bundle from {0}", request.url);
                 OnFailed();
