@@ -56,10 +56,10 @@ namespace Heartcatch.Core
         private string getURL(string name)
         {
             return string.Format("file://{0}/{1}/{2}/{3}",
-                                 Application.streamingAssetsPath,
-                                 Utility.AssetBundlesOutputPath,
-                                 Utility.GetPlatformName(),
-                                 name);
+                Application.streamingAssetsPath,
+                Utility.AssetBundlesOutputPath,
+                Utility.GetPlatformName(),
+                name);
         }
     }
 }

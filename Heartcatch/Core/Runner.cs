@@ -23,13 +23,9 @@ namespace Heartcatch.Core
 
             var cachePrimed = false;
             if (gameConfig.IsLocalBuild)
-            {
                 cachePrimed = true;
-            }
             else
-            {
                 cachePrimed = PlayerPrefs.GetInt(CachePrimedFlag, 0) != 0;
-            }
             if (cachePrimed)
             {
                 var runner = Resources.Load<Runner>(Utility.RunnerResource);

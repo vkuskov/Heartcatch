@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Heartcatch.Design.Models;
+﻿using Heartcatch.Design.Models;
 using UnityEditor;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 namespace Heartcatch.Editor
 {
@@ -22,12 +17,12 @@ namespace Heartcatch.Editor
             EditorGUILayout.Space();
             GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));
             EditorGUILayout.Space();
-            newAssetName = EditorGUILayout.TextField("Name:", this.newAssetName);
+            newAssetName = EditorGUILayout.TextField("Name:", newAssetName);
             newHiDefAsset = EditorGUILayout.ObjectField(newHiDefAsset, typeof(GameObject), false);
             EditorGUI.BeginDisabledGroup(string.IsNullOrEmpty(newAssetName) || newHiDefAsset == null);
             if (GUILayout.Button("Add"))
             {
-                assetBundle.Assets.Add(new Asset() {Name =  newAssetName, HiDefAsset = newHiDefAsset});
+                assetBundle.Assets.Add(new Asset {Name = newAssetName, HiDefAsset = newHiDefAsset});
                 EditorUtility.SetDirty(assetBundle);
                 newAssetName = null;
                 newHiDefAsset = null;
@@ -36,12 +31,12 @@ namespace Heartcatch.Editor
             EditorGUILayout.Space();
             GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));
             EditorGUILayout.Space();
-            for (int i = 0; i < assetBundle.Assets.Count;)
+            for (var i = 0; i < assetBundle.Assets.Count;)
             {
                 GUILayout.Box("", GUILayout.ExpandWidth(true), GUILayout.Height(1));
                 var asset = assetBundle.Assets[i];
                 EditorGUILayout.BeginHorizontal();
-                bool toRemove = GUILayout.Button("X");
+                var toRemove = GUILayout.Button("X");
                 EditorGUI.BeginChangeCheck();
                 asset.Name = EditorGUILayout.TextField("", asset.Name);
                 EditorGUILayout.EndHorizontal();
@@ -52,13 +47,9 @@ namespace Heartcatch.Editor
                     EditorUtility.SetDirty(assetBundle);
                 }
                 if (toRemove)
-                {
                     assetBundle.Assets.RemoveAt(i);
-                }
                 else
-                {
                     i++;
-                }
             }
         }
     }
