@@ -9,7 +9,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Heartcatch.Editor")]
-[assembly: AssemblyCopyright("Copyright © Vladimir Kuskov 2017")]
+[assembly: AssemblyCopyright("Copyright © 2017 Vladimir Kuskov")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
