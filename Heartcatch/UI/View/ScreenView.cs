@@ -7,20 +7,16 @@ using UnityEngine;
 namespace Heartcatch.UI.View
 {
     [RequireComponent(typeof(CanvasGroup))]
+    [RequireComponent(typeof(Canvas))]
     public abstract class ScreenView : strange.extensions.mediation.impl.View, IScreenModel
     {
         private CanvasGroup canvasGroup;
+        private Canvas canvas;
         private bool otherScreenHasFocus;
         private ScreenState screenState = ScreenState.TransitionOn;
         private TimeSpan transitionOffTime = TimeSpan.Zero;
         private TimeSpan transitionOnTime = TimeSpan.Zero;
         private float transitionPosition = 1f;
-
-        public ScreenView()
-        {
-            IsPopup = false;
-            IsExiting = false;
-        }
 
         protected IScreenManagerService ScreenManagerService { get; private set; }
 
@@ -65,9 +61,9 @@ namespace Heartcatch.UI.View
         {
             transform.SetAsLastSibling();
             ScreenManagerService = screenManagerService;
-            OnAttached(screenManagerService);
             IsExiting = false;
             screenState = ScreenState.TransitionOn;
+            OnAttached();
         }
 
         public void OnUpdate(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen)
@@ -104,6 +100,7 @@ namespace Heartcatch.UI.View
                     screenState = ScreenState.Active;
                 }
             }
+            canvas.enabled = screenState != ScreenState.Hidden;
         }
 
         public void ExitScreen()
@@ -123,6 +120,7 @@ namespace Heartcatch.UI.View
         {
             base.Awake();
             canvasGroup = GetComponent<CanvasGroup>();
+            canvas = GetComponent<Canvas>();
         }
 
         private bool UpdateTransition(GameTime gameTime, TimeSpan time, int direction)
@@ -150,12 +148,14 @@ namespace Heartcatch.UI.View
 
         protected virtual void OnScreenRemoved()
         {
+            canvas.enabled = false;
             gameObject.SetActive(false);
         }
 
-        protected virtual void OnAttached(IScreenManagerService screenManagerService)
+        protected virtual void OnAttached()
         {
             gameObject.SetActive(true);
+            canvas.enabled = true;
         }
     }
 }
