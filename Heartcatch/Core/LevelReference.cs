@@ -10,5 +10,11 @@ namespace Heartcatch.Core
     {
         public string AssetBundle;
         public int SceneIndex;
+
+        public LevelReference(string assetBundle, int sceneIndex = 0)
+        {
+            AssetBundle = assetBundle;
+            SceneIndex = sceneIndex;
+        }
     }
 }
