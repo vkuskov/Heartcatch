@@ -50,7 +50,10 @@ namespace Heartcatch.Core.Services
             foreach (var it in assetBundles)
             {
                 if (!preloadedBundles.Contains(it.Key))
+                {
+                    Debug.LogFormat("Unloading bundle: {0}", it.Key);
                     it.Value.Unload();
+                }
             }
         }
 
