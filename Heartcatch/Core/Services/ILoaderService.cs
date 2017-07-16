@@ -9,6 +9,7 @@ namespace Heartcatch.Core.Services
         bool IsInitialized { get; }
         void LoadAssetBundle(string name, Action<IAssetBundleModel> onLoaded);
         void UnloadAll();
+        void Preload(string[] assetBundles, Action onLoaded);
         void Update();
     }
 }

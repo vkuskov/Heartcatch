@@ -59,6 +59,11 @@ namespace Heartcatch.Design.Services
         {
         }
 
+        public void Preload(string[] assetBundles, Action onLoaded)
+        {
+            onLoaded();
+        }
+
         public void Update()
         {
         }

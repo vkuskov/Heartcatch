@@ -13,6 +13,8 @@ namespace Heartcatch.Core.Services
         private readonly Dictionary<string, AssetBundleModel> loadingAssetBundles =
             new Dictionary<string, AssetBundleModel>();
 
+        private HashSet<string> preloadedBundles = new HashSet<string>();
+
         private readonly List<ILoadingOperation> loadingOperations = new List<ILoadingOperation>();
         private AssetBundleManifest assetBundleManifest;
 
@@ -64,6 +66,19 @@ namespace Heartcatch.Core.Services
                 it.Value.Unload();
             Resources.UnloadUnusedAssets();
             GC.Collect();
+        }
+
+        public void Preload(string[] assetBundles, Action onLoaded)
+        {
+            if (!IsInitialized)
+                throw new LoadingException("Can't load bundles if loader wasn't initialized");
+            if (assetBundles == null)
+                throw new ArgumentNullException("assetBundles");
+            foreach (var assetBundle in assetBundles)
+            {
+                MarkAssetBundleAsPreloaded(assetBundle);
+            }
+            AddLoadingOperation(new PreloadAssetBundlesOperation(this, assetBundles, onLoaded));
         }
 
         public void Update()
@@ -159,6 +174,20 @@ namespace Heartcatch.Core.Services
                 return;
             loadingAssetBundles.Add(name, bundle);
             AddLoadingOperation(loaderFactory.LoadAssetBundle(name, assetBundleManifest.GetAssetBundleHash(name)));
+        }
+
+        private void MarkAssetBundleAsPreloaded(string assetBundle)
+        {
+            if (preloadedBundles.Contains(assetBundle))
+            {
+                return;
+            }
+            preloadedBundles.Add(assetBundle);
+            var dependencies = assetBundleManifest.GetDirectDependencies(assetBundle);
+            foreach (var dependency in dependencies)
+            {
+                MarkAssetBundleAsPreloaded(dependency);
+            }
         }
     }
 }

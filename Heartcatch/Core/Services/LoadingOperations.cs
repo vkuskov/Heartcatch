@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Heartcatch.Core.Models;
 using UnityEngine;
@@ -306,6 +307,34 @@ namespace Heartcatch.Core.Services
         private string GetBundlePath(string assetBundleName)
         {
             return Path.Combine(rootPath, assetBundleName);
+        }
+    }
+
+    internal sealed class PreloadAssetBundlesOperation : ILoadingOperation
+    {
+        private BaseLoaderService loaderService;
+        private int bundlesToLoad = 0;
+        private Action onLoaded;
+
+        public PreloadAssetBundlesOperation(BaseLoaderService loaderService, string[] assetBundles, Action onLoaded)
+        {
+            bundlesToLoad = assetBundles.Length;
+            this.onLoaded = onLoaded;
+            foreach (var assetBundle in assetBundles)
+            {
+                loaderService.LoadAssetBundle(assetBundle, bundle => bundlesToLoad--);
+            }
+        }
+
+        public bool Update()
+        {
+            return bundlesToLoad > 0;
+        }
+
+        public void Finish()
+        {
+            if (onLoaded != null)
+                onLoaded();
         }
     }
 }
