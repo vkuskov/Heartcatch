@@ -28,7 +28,7 @@ namespace Heartcatch.Core
             baseAssetLoaderService = CreateAssetLoaderService(gameConfig);
             sceneLoaderService = CreateSceneLoaderService();
             injectionBinder.Bind<IAssetLoaderService>().ToValue(baseAssetLoaderService).CrossContext();
-            injectionBinder.Bind<ISceneLoaderService>().ToValue(sceneLoaderService);
+            injectionBinder.Bind<ISceneLoaderService>().ToValue(sceneLoaderService).CrossContext();
 
             updateService = new UpdateService();
             timeService = new SmoothTimeService();
