@@ -10,6 +10,8 @@ namespace Heartcatch.UI.View
     [RequireComponent(typeof(Canvas))]
     public abstract class ScreenView : strange.extensions.mediation.impl.View, IScreenModel
     {
+        private const float TransitionCurve = 2.2f;
+
         private CanvasGroup canvasGroup;
         private Canvas canvas;
         private bool otherScreenHasFocus;
@@ -143,7 +145,7 @@ namespace Heartcatch.UI.View
 
         protected virtual void OnUpdateTransition(float position)
         {
-            canvasGroup.alpha = 1f - position;
+            canvasGroup.alpha = Mathf.Pow(1f - position, TransitionCurve);
         }
 
         protected virtual void OnScreenRemoved()

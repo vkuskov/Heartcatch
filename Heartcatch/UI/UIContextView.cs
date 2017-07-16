@@ -1,4 +1,5 @@
 ﻿using Heartcatch.Core.Services;
+using Heartcatch.UI.Models;
 using Heartcatch.UI.View;
 using strange.extensions.context.impl;
 using UnityEngine;
@@ -11,6 +12,8 @@ namespace Heartcatch.UI
         [Inject]
         public ITimeService TimeService { get; set; }
 
+        [SerializeField] private UIConfigModel uiConfig;
+
         protected virtual void Awake()
         {
             context = CreateUIContext();
@@ -19,7 +22,7 @@ namespace Heartcatch.UI
 
         protected virtual UIContext CreateUIContext()
         {
-            return new UIContext(this);
+            return new UIContext(this, uiConfig);
         }
 
         protected virtual void Update()

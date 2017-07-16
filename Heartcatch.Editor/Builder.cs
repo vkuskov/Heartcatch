@@ -135,6 +135,7 @@ namespace Heartcatch.Editor
 
         private static void CopySingleBundle(string source, string destination, string name)
         {
+            Debug.LogFormat("Copy bundle {0} to {1}", name, destination);
             var srcPath = Path.Combine(source, name);
             var destPath = Path.Combine(destination, name);
             File.Copy(srcPath, destPath);
@@ -181,7 +182,6 @@ namespace Heartcatch.Editor
                 Debug.LogFormat("Bundle: {0}", desc.Name);
                 bundle.assetBundleName = desc.Name;
                 bundle.assetNames = GetAllAssetPaths(allAssets);
-                bundle.addressableNames = GetAllAddressableNames(allAssets);
                 yield return bundle;
             }
         }

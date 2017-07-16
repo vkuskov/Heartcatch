@@ -35,7 +35,7 @@ namespace Heartcatch.UI.Services
                 var screen = screensToUpdate[screensToUpdate.Count - 1];
                 screensToUpdate.RemoveAt(screensToUpdate.Count - 1);
                 screen.OnUpdate(gameTime, otherScreenHasFocus, coveredByOtherScreen);
-                if (screen.State == ScreenState.TransitionOn || screen.State == ScreenState.TransitionOn)
+                if (screen.State == ScreenState.TransitionOn || screen.State == ScreenState.Active)
                 {
                     if (!otherScreenHasFocus)
                         otherScreenHasFocus = true;
