@@ -47,6 +47,7 @@ namespace Heartcatch.Core.Services
                 AssetLoaderService.LoadAssetBundle(part.AssetBundle, bundle =>
                 {
                     sceneNames[reference.Index] = bundle.GetScenePath(part.SceneIndex);
+                    reference = null;
                     bundlesToLoad--;
                     if (bundlesToLoad == 0)
                     {

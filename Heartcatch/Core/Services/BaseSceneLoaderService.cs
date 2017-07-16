@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Heartcatch.Core.Services
@@ -29,6 +30,7 @@ namespace Heartcatch.Core.Services
                 return;
             if (firstPhase && IsLoadingFinished())
             {
+                GC.Collect(GC.MaxGeneration);
                 foreach (var operation in operations)
                     operation.allowSceneActivation = true;
                 firstPhase = false;
