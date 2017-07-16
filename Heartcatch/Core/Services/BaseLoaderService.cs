@@ -63,9 +63,10 @@ namespace Heartcatch.Core.Services
         public void UnloadAll()
         {
             foreach (var it in assetBundles)
-                it.Value.Unload();
-            Resources.UnloadUnusedAssets();
-            GC.Collect();
+            {
+                if (!preloadedBundles.Contains(it.Key))
+                    it.Value.Unload();
+            }
         }
 
         public void Preload(string[] assetBundles, Action onLoaded)
