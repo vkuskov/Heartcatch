@@ -26,7 +26,7 @@ namespace Heartcatch.Core
             var gameConfig = Resources.Load<GameConfigModel>(Utility.GameConfigResource);
             injectionBinder.Bind<IGameConfigModel>().ToValue(gameConfig).CrossContext();
             baseLoaderService = CreateLoaderService(gameConfig);
-            sceneLoaderService = CreateLevelLoaderService();
+            sceneLoaderService = CreateSceneLoaderService();
             injectionBinder.Bind<ILoaderService>().ToValue(baseLoaderService).CrossContext();
             injectionBinder.Bind<ISceneLoaderService>().ToValue(sceneLoaderService);
 
@@ -104,6 +104,6 @@ namespace Heartcatch.Core
 
         protected abstract ILoaderService CreateLoaderService(IGameConfigModel config);
 
-        protected abstract ISceneLoaderService CreateLevelLoaderService();
+        protected abstract ISceneLoaderService CreateSceneLoaderService();
     }
 }
