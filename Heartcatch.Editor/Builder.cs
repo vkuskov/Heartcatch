@@ -135,6 +135,7 @@ namespace Heartcatch.Editor
 
         private static void CopySingleBundle(string source, string destination, string name)
         {
+            Debug.LogFormat("Copy bundle {0} to {1}", name, destination);
             var srcPath = Path.Combine(source, name);
             var destPath = Path.Combine(destination, name);
             File.Copy(srcPath, destPath);
