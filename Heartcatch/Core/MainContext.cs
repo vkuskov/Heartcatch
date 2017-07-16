@@ -2,6 +2,7 @@
 using System.Net.Sockets;
 using Heartcatch.Core.Models;
 using Heartcatch.Core.Services;
+using Heartcatch.Core.View;
 using strange.extensions.pool.api;
 using strange.extensions.pool.impl;
 using UnityEngine;
@@ -37,6 +38,8 @@ namespace Heartcatch.Core
 
             injectionBinder.Bind<ResourceRequestModel>().To<ResourceRequestModel>();
             injectionBinder.Bind<IPool<ResourceRequestModel>>().To<Pool<ResourceRequestModel>>().ToSingleton();
+
+            mediationBinder.Bind<StartupView>().ToMediator<StartupMediator>();
 
             injectionBinder.Bind<AssetsReadySignal>().ToSingleton().CrossContext();
         }

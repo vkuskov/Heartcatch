@@ -49,6 +49,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\AssetBundleCachePrime.cs" />
+    <Compile Include="Core\View\StartupMediator.cs" />
+    <Compile Include="Core\View\StartupView.cs" />
     <Compile Include="Exceptions.cs" />
     <Compile Include="Core\GameTime.cs" />
     <Compile Include="Core\IUpdateable.cs" />

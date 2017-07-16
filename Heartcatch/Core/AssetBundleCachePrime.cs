@@ -14,7 +14,7 @@ namespace Heartcatch.Core
         {
             var manifest = LoadBundle(Utility.GetPlatformName());
             yield return manifest.Send();
-            if (!manifest.isNetworkError && !manifest.isHttpError)
+            if (!manifest.isError)
             {
                 var manifestBundle = DownloadHandlerAssetBundle.GetContent(manifest);
                 var assetBundleManifest = manifestBundle.LoadAsset<AssetBundleManifest>("AssetBundleManifest");
@@ -22,7 +22,7 @@ namespace Heartcatch.Core
                 {
                     var loadBundle = LoadBundle(bundle, assetBundleManifest.GetAssetBundleHash(bundle));
                     yield return loadBundle.Send();
-                    if (!loadBundle.isNetworkError && !loadBundle.isHttpError)
+                    if (!loadBundle.isError)
                     {
                         var assetBundle = DownloadHandlerAssetBundle.GetContent(loadBundle);
                         assetBundle.Unload(true);

@@ -8,12 +8,12 @@ namespace Heartcatch.UI
 {
     public class UIContext : SignalContext
     {
-        private const string UIConfigResource = "UIConfig";
-
         private IScreenManagerService screenManagerService;
+        private IUIConfigModel uiConfig;
 
-        public UIContext(MonoBehaviour view) : base(view)
+        public UIContext(MonoBehaviour view, IUIConfigModel uiConfig) : base(view)
         {
+            this.uiConfig = uiConfig;
         }
 
         protected override void mapBindings()
@@ -22,15 +22,9 @@ namespace Heartcatch.UI
             injectionBinder.Bind<IScreenManagerService>().To<ScreenManagerService>().ToSingleton();
             screenManagerService = injectionBinder.GetInstance<IScreenManagerService>();
             injectionBinder.Bind<IUISoundService>().To<UISoundService>().ToSingleton();
+            injectionBinder.Bind<IUIConfigModel>().ToValue(uiConfig);
             FindAndBindAllScreens();
             BindUISoundManager();
-            LoadUIConfig();
-        }
-
-        private void LoadUIConfig()
-        {
-            var soundConfig = Resources.Load<UIConfigModel>(UIConfigResource);
-            injectionBinder.Bind<IUIConfigModel>().ToValue(soundConfig);
         }
 
         private void BindUISoundManager()

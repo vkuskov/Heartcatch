@@ -181,7 +181,6 @@ namespace Heartcatch.Editor
                 Debug.LogFormat("Bundle: {0}", desc.Name);
                 bundle.assetBundleName = desc.Name;
                 bundle.assetNames = GetAllAssetPaths(allAssets);
-                bundle.addressableNames = GetAllAddressableNames(allAssets);
                 yield return bundle;
             }
         }
