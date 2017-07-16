@@ -128,8 +128,12 @@ namespace Heartcatch.Editor
                 Directory.Delete(Application.streamingAssetsPath, true);
             var fullPath = Path.Combine(Application.streamingAssetsPath, sourcePath);
             Directory.CreateDirectory(fullPath);
-            foreach (var it in GetAssetsForStreamingAssets(fullCopy))
+            foreach (var it in GetAssetsForStreamingAssets<AssetBundleDescriptionModel>(fullCopy))
                 CopySingleBundle(sourcePath, fullPath, it);
+            foreach (var it in GetAssetsForStreamingAssets<UIAssetBundleDescriptionModel>(fullCopy))
+            {
+                CopySingleBundle(sourcePath, fullPath, it);
+            }
             CopySingleBundle(sourcePath, fullPath, Utility.GetPlatformName());
         }
 
@@ -141,13 +145,13 @@ namespace Heartcatch.Editor
             File.Copy(srcPath, destPath);
         }
 
-        private static IEnumerable<string> GetAssetsForStreamingAssets(bool fullCopy)
+        private static IEnumerable<string> GetAssetsForStreamingAssets<T>(bool fullCopy) where T : ScriptableObject, IAssetBundleDescriptionModel
         {
-            var guids = AssetDatabase.FindAssets(string.Format("t:{0}", typeof(AssetBundleDescriptionModel)));
+            var guids = AssetDatabase.FindAssets(string.Format("t:{0}", typeof(T)));
             foreach (var guid in guids)
             {
                 var path = AssetDatabase.GUIDToAssetPath(guid);
-                var desc = AssetDatabase.LoadAssetAtPath<AssetBundleDescriptionModel>(path);
+                var desc = AssetDatabase.LoadAssetAtPath<T>(path);
                 if (fullCopy || desc.IncludeToStreamingAssets)
                     yield return desc.Name;
             }
