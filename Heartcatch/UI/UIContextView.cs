@@ -16,11 +16,11 @@ namespace Heartcatch.UI
 
         protected virtual void Awake()
         {
-            context = CreateUiContext();
+            context = CreateUiContext(uiConfig);
             context.Start();
         }
 
-        protected virtual UiContext CreateUiContext()
+        protected virtual UiContext CreateUiContext(IUiConfigModel uiConfig)
         {
             return new UiContext(this, uiConfig);
         }
