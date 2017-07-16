@@ -1,6 +1,7 @@
-﻿using Heartcatch.Core.Models;
+﻿using System;
+using Heartcatch.Core.Models;
 using strange.extensions.pool.api;
-using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Heartcatch.Core.Services
 {
@@ -12,7 +13,7 @@ namespace Heartcatch.Core.Services
         [Inject]
         public IPool<ResourceRequestModel> ResourceRequests { get; set; }
 
-        public void RequestResources(IResourceModel resourceModel)
+        public void RequestResources(IResourceModel resourceModel, Action<IResourceRequestModel> onLoaded)
         {
             var requestModel = ResourceRequests.GetInstance();
             resourceModel.CollectResources(requestModel);
@@ -28,7 +29,7 @@ namespace Heartcatch.Core.Services
                         requestModel.OnResourceLoaded(name, resource);
                         if (requestModel.IsAllResourcesLoaded())
                         {
-                            resourceModel.OnResourcesLoaded(requestModel);
+                            onLoaded(requestModel);
                             requestModel.Release();
                             ResourceRequests.ReturnInstance(requestModel);
                         }
