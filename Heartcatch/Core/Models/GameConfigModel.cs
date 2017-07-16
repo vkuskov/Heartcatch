@@ -6,19 +6,40 @@ namespace Heartcatch.Core.Models
     public sealed class GameConfigModel : ScriptableObject, IGameConfigModel
     {
         [SerializeField] private string assetBundleUrl;
-        [SerializeField] private string firstSceneBundle;
         [SerializeField] private string gameName;
         [SerializeField] private bool isDevelopmentMode;
         [SerializeField] private bool isLocalBuild;
+        [SerializeField] private string loadingScene;
+        [SerializeField] private LevelReference firstLevel;
 
-        public bool IsDevelopmentMode => isDevelopmentMode;
+        public bool IsDevelopmentMode
+        {
+            get { return isDevelopmentMode; }
+        }
 
-        public bool IsLocalBuild => isLocalBuild;
+        public bool IsLocalBuild
+        {
+            get { return isLocalBuild; }
+        }
 
-        public string AssetBundleUrl => assetBundleUrl;
+        public string LoadingScene
+        {
+            get { return loadingScene; }
+        }
 
-        public string FirstSceneBundle => firstSceneBundle;
+        public string AssetBundleUrl
+        {
+            get { return assetBundleUrl; }
+        }
 
-        public string GameName => gameName;
+        public LevelReference FirstLevel
+        {
+            get { return firstLevel; }
+        }
+
+        public string GameName
+        {
+            get { return gameName; }
+        }
     }
 }

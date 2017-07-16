@@ -1,8 +1,12 @@
-﻿namespace Heartcatch.Core.Services
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+
+namespace Heartcatch.Core.Services
 {
     public interface ILevelLoaderService
     {
-        void LoadScenes(params string[] paths);
-        void Update();
+        void LoadLevel(params LevelReference[] parts);
     }
 }

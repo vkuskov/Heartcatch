@@ -1,10 +1,10 @@
 ﻿namespace Heartcatch.Core.Services
 {
-    public sealed class RemoteLoaderService : BaseLoaderService
+    public sealed class RemoteAssetLoaderService : BaseAssetLoaderService
     {
         private readonly string baseUrl;
 
-        public RemoteLoaderService(string baseUrl)
+        public RemoteAssetLoaderService(string baseUrl)
         {
             this.baseUrl = baseUrl;
         }

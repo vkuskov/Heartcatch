@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Heartcatch.Core.Services
 {
-    public abstract class BaseLevelLoaderService : ILevelLoaderService
+    public abstract class BaseSceneLoaderService : ISceneLoaderService
     {
         private const float FinishedLoadingProgress = 0.9f;
 

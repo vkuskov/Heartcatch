@@ -8,13 +8,13 @@ using UnityEngine;
 
 namespace Heartcatch.UI.Services
 {
-    public sealed class UISoundService : IUISoundService
+    public sealed class UiSoundService : IUiSoundService
     {
         [Inject]
-        public IUIConfigModel UiConfigModel { get; set; }
+        public IUiConfigModel UiConfigModel { get; set; }
 
         [Inject]
-        public IUISoundPlayer UiSoundPlayer { get; set; }
+        public IUiSoundPlayer UiSoundPlayer { get; set; }
 
         public void OnClick()
         {

@@ -6,12 +6,12 @@ using UnityEngine;
 
 namespace Heartcatch.UI
 {
-    public class UIContext : SignalContext
+    public class UiContext : SignalContext
     {
         private IScreenManagerService screenManagerService;
-        private IUIConfigModel uiConfig;
+        private IUiConfigModel uiConfig;
 
-        public UIContext(MonoBehaviour view, IUIConfigModel uiConfig) : base(view)
+        public UiContext(MonoBehaviour view, IUiConfigModel uiConfig) : base(view)
         {
             this.uiConfig = uiConfig;
         }
@@ -21,16 +21,16 @@ namespace Heartcatch.UI
             base.mapBindings();
             injectionBinder.Bind<IScreenManagerService>().To<ScreenManagerService>().ToSingleton();
             screenManagerService = injectionBinder.GetInstance<IScreenManagerService>();
-            injectionBinder.Bind<IUISoundService>().To<UISoundService>().ToSingleton();
-            injectionBinder.Bind<IUIConfigModel>().ToValue(uiConfig);
+            injectionBinder.Bind<IUiSoundService>().To<UiSoundService>().ToSingleton();
+            injectionBinder.Bind<IUiConfigModel>().ToValue(uiConfig);
             FindAndBindAllScreens();
-            BindUISoundManager();
+            BindUiSoundManager();
         }
 
-        private void BindUISoundManager()
+        private void BindUiSoundManager()
         {
             var go = contextView as GameObject;
-            injectionBinder.Bind<IUISoundPlayer>().ToValue(go.GetComponent<IUISoundPlayer>());
+            injectionBinder.Bind<IUiSoundPlayer>().ToValue(go.GetComponent<IUiSoundPlayer>());
         }
 
         private void FindAndBindAllScreens()

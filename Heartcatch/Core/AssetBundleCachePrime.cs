@@ -41,19 +41,19 @@ namespace Heartcatch.Core
 
         private UnityWebRequest LoadBundle(string name)
         {
-            var url = getURL(name);
+            var url = GetUrl(name);
             var request = UnityWebRequest.GetAssetBundle(url);
             return request;
         }
 
         private UnityWebRequest LoadBundle(string name, Hash128 hash)
         {
-            var url = getURL(name);
+            var url = GetUrl(name);
             var request = UnityWebRequest.GetAssetBundle(url, hash, 0);
             return request;
         }
 
-        private string getURL(string name)
+        private string GetUrl(string name)
         {
             return string.Format("file://{0}/{1}/{2}/{3}",
                 Application.streamingAssetsPath,

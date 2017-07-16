@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Heartcatch.UI.View
 {
-    public interface IUISoundPlayer
+    public interface IUiSoundPlayer
     {
         void PlaySound(AudioClip clip);
     }

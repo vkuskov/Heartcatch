@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Heartcatch.Core.Services
 {
-    public abstract class BaseLoaderService : ILoaderService
+    public abstract class BaseAssetLoaderService : IAssetLoaderService
     {
         private readonly Dictionary<string, AssetBundleModel> assetBundles = new Dictionary<string, AssetBundleModel>();
 
@@ -13,42 +13,34 @@ namespace Heartcatch.Core.Services
         private readonly Dictionary<string, AssetBundleModel> loadingAssetBundles =
             new Dictionary<string, AssetBundleModel>();
 
+        private HashSet<string> preloadedBundles = new HashSet<string>();
+
         private readonly List<ILoadingOperation> loadingOperations = new List<ILoadingOperation>();
         private AssetBundleManifest assetBundleManifest;
 
         private IAssetLoaderFactory loaderFactory;
 
-        public bool IsLoading => loadingOperations.Count > 0;
+        public bool IsLoading
+        {
+            get { return loadingOperations.Count > 0; }
+        }
 
-        public bool IsInitialized => assetBundleManifest != null;
+        public bool IsInitialized
+        {
+            get { return assetBundleManifest != null; }
+        }
 
         public void LoadAssetBundle(string name, Action<IAssetBundleModel> onLoaded)
         {
             var bundle = GetAssetBundle(name);
             if (bundle.IsLoaded)
             {
-                bundle.AddReference();
                 onLoaded(bundle);
             }
             else
             {
                 if (!loadingAssetBundles.ContainsKey(name))
-                    loadAssetBundle(name);
-                AddLoadingOperation(new WaitForAssetBundleToLoad(this, name, onLoaded));
-            }
-        }
-
-        public void GetOrLoadAssetBundle(string name, Action<IAssetBundleModel> onLoaded)
-        {
-            var bundle = GetAssetBundle(name);
-            if (bundle.IsLoaded)
-            {
-                onLoaded(bundle);
-            }
-            else
-            {
-                if (!loadingAssetBundles.ContainsKey(name))
-                    loadAssetBundle(name);
+                    LoadAssetBundle(name);
                 AddLoadingOperation(new WaitForAssetBundleToLoad(this, name, onLoaded));
             }
         }
@@ -56,9 +48,26 @@ namespace Heartcatch.Core.Services
         public void UnloadAll()
         {
             foreach (var it in assetBundles)
-                it.Value.ForceUnload();
-            Resources.UnloadUnusedAssets();
-            GC.Collect();
+            {
+                if (!preloadedBundles.Contains(it.Key))
+                {
+                    Debug.LogFormat("Unloading bundle: {0}", it.Key);
+                    it.Value.Unload();
+                }
+            }
+        }
+
+        public void Preload(string[] assetBundles, Action onLoaded)
+        {
+            if (!IsInitialized)
+                throw new LoadingException("Can't load bundles if loader wasn't initialized");
+            if (assetBundles == null)
+                throw new ArgumentNullException("assetBundles");
+            foreach (var assetBundle in assetBundles)
+            {
+                MarkAssetBundleAsPreloaded(assetBundle);
+            }
+            AddLoadingOperation(new PreloadAssetBundlesOperation(this, assetBundles, onLoaded));
         }
 
         public void Update()
@@ -147,13 +156,28 @@ namespace Heartcatch.Core.Services
             throw new ArgumentException(string.Format("Asset bundle \"{0}\" doesn't exist", name));
         }
 
-        internal void loadAssetBundle(string name)
+        internal void LoadAssetBundle(string name)
         {
             var bundle = GetAssetBundle(name);
             if (bundle.IsLoadedItself || loadingAssetBundles.ContainsKey(name))
                 return;
+            Debug.LogFormat("Loading asset bundle: {0}", name);
             loadingAssetBundles.Add(name, bundle);
             AddLoadingOperation(loaderFactory.LoadAssetBundle(name, assetBundleManifest.GetAssetBundleHash(name)));
+        }
+
+        private void MarkAssetBundleAsPreloaded(string assetBundle)
+        {
+            if (preloadedBundles.Contains(assetBundle))
+            {
+                return;
+            }
+            preloadedBundles.Add(assetBundle);
+            var dependencies = assetBundleManifest.GetDirectDependencies(assetBundle);
+            foreach (var dependency in dependencies)
+            {
+                MarkAssetBundleAsPreloaded(dependency);
+            }
         }
     }
 }
