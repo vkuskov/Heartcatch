@@ -10,13 +10,13 @@ namespace Heartcatch.Design.Services
 {
     public sealed class SimulatedAssetLoaderService : IAssetLoaderService
     {
-        private readonly Dictionary<string, SimulatedAssetBundleModel> _assetBundles =
+        private readonly Dictionary<string, SimulatedAssetBundleModel> assetBundles =
             new Dictionary<string, SimulatedAssetBundleModel>();
 
         public SimulatedAssetLoaderService()
         {
             LoadAssetBundles<AssetBundleDescriptionModel>();
-            LoadAssetBundles<UIAssetBundleDescriptionModel>();
+            LoadAssetBundles<UiAssetBundleDescriptionModel>();
         }
 
         private void LoadAssetBundles<T>()
@@ -27,7 +27,7 @@ namespace Heartcatch.Design.Services
             {
                 var path = AssetDatabase.GUIDToAssetPath(guid);
                 var description = AssetDatabase.LoadAssetAtPath<T>(path);
-                _assetBundles.Add(description.Name, new SimulatedAssetBundleModel(description));
+                assetBundles.Add(description.Name, new SimulatedAssetBundleModel(description));
             }
         }
 
@@ -44,7 +44,7 @@ namespace Heartcatch.Design.Services
         public void LoadAssetBundle(string name, Action<IAssetBundleModel> onLoaded)
         {
             SimulatedAssetBundleModel assetBundle;
-            if (_assetBundles.TryGetValue(name, out assetBundle))
+            if (assetBundles.TryGetValue(name, out assetBundle))
                 onLoaded(assetBundle);
             else
                 Debug.LogErrorFormat("Can't load asset bundle {0}", name);

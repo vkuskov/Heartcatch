@@ -8,12 +8,12 @@ using UnityEngine.Audio;
 
 namespace Heartcatch.UI.View
 {
-    public sealed class UISoundManager : strange.extensions.mediation.impl.View, IUISoundPlayer
+    public sealed class UiSoundManager : strange.extensions.mediation.impl.View, IUiSoundPlayer
     {
         private const int SoundSlots = 3;
 
         [Inject]
-        public IUIConfigModel UiConfigModel { get; set; }
+        public IUiConfigModel UiConfigModel { get; set; }
 
         private List<AudioSource> audioSources = new List<AudioSource>();
 
@@ -23,7 +23,7 @@ namespace Heartcatch.UI.View
             for (int i = 0; i < SoundSlots; ++i)
             {
                 var source = gameObject.AddComponent<AudioSource>();
-                source.outputAudioMixerGroup = UiConfigModel.UISoundMixer;
+                source.outputAudioMixerGroup = UiConfigModel.UiSoundMixer;
                 audioSources.Add(source);
             }
         }

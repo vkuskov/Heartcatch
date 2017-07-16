@@ -7,9 +7,9 @@ using UnityEngine.Audio;
 
 namespace Heartcatch.UI.Models
 {
-    public interface IUIConfigModel
+    public interface IUiConfigModel
     {
-        AudioMixerGroup UISoundMixer { get; }
+        AudioMixerGroup UiSoundMixer { get; }
         AudioClip ButtonClickSound { get; }
         AudioClip DenySound { get; }
         AudioClip AcceptSound { get; }

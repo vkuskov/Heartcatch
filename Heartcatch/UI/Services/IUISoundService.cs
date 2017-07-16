@@ -6,7 +6,7 @@ using UnityEngine;
 
 namespace Heartcatch.UI.Services
 {
-    public interface IUISoundService
+    public interface IUiSoundService
     {
         void OnClick();
         void OnDeny();

@@ -8,15 +8,15 @@ using UnityEngine;
 
 namespace Heartcatch.Editor
 {
-    [CustomEditor(typeof(UIAssetBundleDescriptionModel))]
-    public sealed class UIAssetBundleEditor : UnityEditor.Editor
+    [CustomEditor(typeof(UiAssetBundleDescriptionModel))]
+    public sealed class UiAssetBundleEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {
             base.OnInspectorGUI();
             if (GUILayout.Button("Apply"))
             {
-                var bundleDescription = (UIAssetBundleDescriptionModel) target;
+                var bundleDescription = (UiAssetBundleDescriptionModel) target;
                 bundleDescription.ApplySetting();
             }
         }

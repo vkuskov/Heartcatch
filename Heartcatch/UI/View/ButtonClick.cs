@@ -13,7 +13,7 @@ namespace Heartcatch.UI.View
     public class ButtonClick : strange.extensions.mediation.impl.View
     {
         [Inject]
-        public IUISoundService UiSoundService { get; set; }
+        public IUiSoundService UiSoundService { get; set; }
 
         protected override void Awake()
         {

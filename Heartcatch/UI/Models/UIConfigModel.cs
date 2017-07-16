@@ -8,14 +8,14 @@ using UnityEngine.Audio;
 namespace Heartcatch.UI.Models
 {
     [CreateAssetMenu(menuName = "Heartcatch/UI Config")]
-    public sealed class UIConfigModel : ScriptableObject, IUIConfigModel
+    public sealed class UiConfigModel : ScriptableObject, IUiConfigModel
     {
         [SerializeField] private AudioMixerGroup uiSoundMixer;
         [SerializeField] private AudioClip buttonClickSound;
         [SerializeField] private AudioClip denySound;
         [SerializeField] private AudioClip acceptSound;
 
-        public AudioMixerGroup UISoundMixer
+        public AudioMixerGroup UiSoundMixer
         {
             get { return uiSoundMixer; }
         }

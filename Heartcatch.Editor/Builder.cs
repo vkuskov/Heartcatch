@@ -130,7 +130,7 @@ namespace Heartcatch.Editor
             Directory.CreateDirectory(fullPath);
             foreach (var it in GetAssetsForStreamingAssets<AssetBundleDescriptionModel>(fullCopy))
                 CopySingleBundle(sourcePath, fullPath, it);
-            foreach (var it in GetAssetsForStreamingAssets<UIAssetBundleDescriptionModel>(fullCopy))
+            foreach (var it in GetAssetsForStreamingAssets<UiAssetBundleDescriptionModel>(fullCopy))
             {
                 CopySingleBundle(sourcePath, fullPath, it);
             }
@@ -178,7 +178,7 @@ namespace Heartcatch.Editor
         {
             var allBundles = new List<AssetBundleBuild>();
             allBundles.AddRange(GetAssetBundles<AssetBundleDescriptionModel>());
-            allBundles.AddRange(GetAssetBundles<UIAssetBundleDescriptionModel>());
+            allBundles.AddRange(GetAssetBundles<UiAssetBundleDescriptionModel>());
             return allBundles;
         }
 

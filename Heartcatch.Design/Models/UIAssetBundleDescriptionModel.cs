@@ -9,7 +9,7 @@ using UnityEngine;
 namespace Heartcatch.Design.Models
 {
     [CreateAssetMenu(menuName = "Heartcatch/UI Asset Bundle")]
-    public sealed class UIAssetBundleDescriptionModel : ScriptableObject, IAssetBundleDescriptionModel
+    public sealed class UiAssetBundleDescriptionModel : ScriptableObject, IAssetBundleDescriptionModel
     {
         [SerializeField] private string name;
         [SerializeField] private bool includeToStreamingAssets;
