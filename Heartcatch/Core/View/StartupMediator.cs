@@ -1,11 +1,15 @@
 ﻿using Heartcatch.Core.Models;
 using Heartcatch.Core.Services;
 using strange.extensions.mediation.impl;
+using UnityEngine;
 
 namespace Heartcatch.Core.View
 {
     public sealed class StartupMediator : Mediator
     {
+        [Inject]
+        public StartupView View { get; set; }
+
         [Inject]
         public AssetsReadySignal AssetsReady { get; set; }
 
@@ -31,6 +35,12 @@ namespace Heartcatch.Core.View
         }
 
         private void OnAssetsReady()
+        {
+            Debug.Log("Preload asset bundles...");
+            LoaderService.Preload(View.PreloadedBundles, OnBundlesPreloaded);
+        }
+
+        private void OnBundlesPreloaded()
         {
             LoaderService.LoadAssetBundle(GameConfigModel.FirstSceneBundle, OnTestLevelLoaded);
         }
