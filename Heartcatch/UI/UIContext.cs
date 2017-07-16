@@ -38,7 +38,7 @@ namespace Heartcatch.UI
             var root = contextView as GameObject;
             var allScreens = root.GetComponentsInChildren<ScreenView>(true);
             foreach (var screen in allScreens)
-                injectionBinder.Bind<ScreenView>().ToValue(screen).ToName(screen.GetType());
+                injectionBinder.Bind(screen.GetType()).ToValue(screen).ToName(screen.ScreenName);
         }
 
         public void Update(GameTime gameTime)
