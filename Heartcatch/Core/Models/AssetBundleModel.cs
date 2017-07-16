@@ -7,15 +7,15 @@ namespace Heartcatch.Core.Models
 {
     public sealed class AssetBundleModel : IAssetBundleModel
     {
-        private readonly BaseLoaderService baseLoaderService;
+        private readonly BaseAssetLoaderService baseAssetLoaderService;
         private readonly string[] dependencies;
         private readonly string name;
         private AssetBundle assetBundle;
 
-        public AssetBundleModel(BaseLoaderService baseLoaderService, AssetBundleManifest manifest, string name)
+        public AssetBundleModel(BaseAssetLoaderService baseAssetLoaderService, AssetBundleManifest manifest, string name)
         {
             this.name = name;
-            this.baseLoaderService = baseLoaderService;
+            this.baseAssetLoaderService = baseAssetLoaderService;
             dependencies = manifest.GetDirectDependencies(name);
         }
 
@@ -32,13 +32,13 @@ namespace Heartcatch.Core.Models
         public void LoadAsset<T>(string name, Action<T> onLoaded) where T : Object
         {
             CheckIfLoaded();
-            baseLoaderService.AddLoadingOperation(new LoadAssetOperation<T>(assetBundle, name, onLoaded));
+            baseAssetLoaderService.AddLoadingOperation(new LoadAssetOperation<T>(assetBundle, name, onLoaded));
         }
 
         public void LoadAllAssets<T>(Action<T[]> onLoaded) where T : Object
         {
             CheckIfLoaded();
-            baseLoaderService.AddLoadingOperation(new LoadAllAssetsOperation<T>(assetBundle, onLoaded));
+            baseAssetLoaderService.AddLoadingOperation(new LoadAllAssetsOperation<T>(assetBundle, onLoaded));
         }
 
         public string GetScenePath(int index)
@@ -61,7 +61,7 @@ namespace Heartcatch.Core.Models
         {
             this.assetBundle = assetBundle;
             foreach (var it in dependencies)
-                baseLoaderService.LoadAssetBundle(it);
+                baseAssetLoaderService.LoadAssetBundle(it);
         }
 
         private void CheckIfLoaded()
@@ -73,7 +73,7 @@ namespace Heartcatch.Core.Models
         private bool IsAllDependenciesLoaded()
         {
             foreach (var it in dependencies)
-                if (!baseLoaderService.IsAssetBundleLoaded(it))
+                if (!baseAssetLoaderService.IsAssetBundleLoaded(it))
                     return false;
             return true;
         }

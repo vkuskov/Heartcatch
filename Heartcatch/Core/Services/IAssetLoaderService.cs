@@ -3,7 +3,7 @@ using Heartcatch.Core.Models;
 
 namespace Heartcatch.Core.Services
 {
-    public interface ILoaderService
+    public interface IAssetLoaderService
     {
         bool IsLoading { get; }
         bool IsInitialized { get; }

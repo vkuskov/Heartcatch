@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Heartcatch.Core.Services
 {
-    public abstract class BaseLoaderService : ILoaderService
+    public abstract class BaseAssetLoaderService : IAssetLoaderService
     {
         private readonly Dictionary<string, AssetBundleModel> assetBundles = new Dictionary<string, AssetBundleModel>();
 

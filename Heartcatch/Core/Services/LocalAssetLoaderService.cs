@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Heartcatch.Core.Services
 {
-    public sealed class LocalLoaderService : BaseLoaderService
+    public sealed class LocalAssetLoaderService : BaseAssetLoaderService
     {
         protected override IAssetLoaderFactory CreateAssetLoaderFactory()
         {

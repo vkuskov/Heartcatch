@@ -17,7 +17,7 @@ namespace Heartcatch.Core.View
         public IGameConfigModel GameConfigModel { get; set; }
 
         [Inject]
-        public ILoaderService LoaderService { get; set; }
+        public IAssetLoaderService AssetLoaderService { get; set; }
 
         [Inject]
         public ISceneLoaderService SceneLoaderService { get; set; }
@@ -37,12 +37,12 @@ namespace Heartcatch.Core.View
         private void OnAssetsReady()
         {
             Debug.Log("Preload asset bundles...");
-            LoaderService.Preload(View.PreloadedBundles, OnBundlesPreloaded);
+            AssetLoaderService.Preload(View.PreloadedBundles, OnBundlesPreloaded);
         }
 
         private void OnBundlesPreloaded()
         {
-            LoaderService.LoadAssetBundle(GameConfigModel.FirstSceneBundle, OnTestLevelLoaded);
+            AssetLoaderService.LoadAssetBundle(GameConfigModel.FirstSceneBundle, OnTestLevelLoaded);
         }
 
         private void OnTestLevelLoaded(IAssetBundleModel bundle)

@@ -16,37 +16,37 @@ namespace Heartcatch.Core.Services
 
     internal sealed class WaitForAssetBundleToLoad : ILoadingOperation
     {
-        private readonly BaseLoaderService baseLoaderService;
+        private readonly BaseAssetLoaderService baseAssetLoaderService;
         private readonly string name;
         private readonly Action<IAssetBundleModel> onLoaded;
 
-        public WaitForAssetBundleToLoad(BaseLoaderService baseLoaderService, string name,
+        public WaitForAssetBundleToLoad(BaseAssetLoaderService baseAssetLoaderService, string name,
             Action<IAssetBundleModel> onLoaded)
         {
-            this.baseLoaderService = baseLoaderService;
+            this.baseAssetLoaderService = baseAssetLoaderService;
             this.name = name;
             this.onLoaded = onLoaded;
         }
 
         public bool Update()
         {
-            return !baseLoaderService.IsAssetBundleLoaded(name);
+            return !baseAssetLoaderService.IsAssetBundleLoaded(name);
         }
 
         public void Finish()
         {
-            onLoaded(baseLoaderService.GetLoadedAssetBundle(name));
+            onLoaded(baseAssetLoaderService.GetLoadedAssetBundle(name));
         }
     }
 
     internal abstract class BaseAssetBundleLoadOperation : ILoadingOperation
     {
-        protected readonly BaseLoaderService BaseLoaderService;
+        protected readonly BaseAssetLoaderService BaseAssetLoaderService;
         private readonly AssetBundleCreateRequest createRequest;
 
-        protected BaseAssetBundleLoadOperation(BaseLoaderService baseLoaderService, string path)
+        protected BaseAssetBundleLoadOperation(BaseAssetLoaderService baseAssetLoaderService, string path)
         {
-            BaseLoaderService = baseLoaderService;
+            BaseAssetLoaderService = baseAssetLoaderService;
             createRequest = AssetBundle.LoadFromFileAsync(path);
         }
 
@@ -67,20 +67,20 @@ namespace Heartcatch.Core.Services
 
     internal abstract class BaseAssetBundleDownloadOperation : ILoadingOperation
     {
-        protected readonly BaseLoaderService BaseLoaderService;
+        protected readonly BaseAssetLoaderService BaseAssetLoaderService;
         private readonly UnityWebRequest request;
 
-        protected BaseAssetBundleDownloadOperation(BaseLoaderService baseLoaderService, string downloadUrl)
+        protected BaseAssetBundleDownloadOperation(BaseAssetLoaderService baseAssetLoaderService, string downloadUrl)
         {
-            BaseLoaderService = baseLoaderService;
+            BaseAssetLoaderService = baseAssetLoaderService;
             request = UnityWebRequest.GetAssetBundle(downloadUrl);
             request.Send();
         }
 
-        protected BaseAssetBundleDownloadOperation(BaseLoaderService baseLoaderService, string downloadUrl,
+        protected BaseAssetBundleDownloadOperation(BaseAssetLoaderService baseAssetLoaderService, string downloadUrl,
             Hash128 hash)
         {
-            BaseLoaderService = baseLoaderService;
+            BaseAssetLoaderService = baseAssetLoaderService;
             request = UnityWebRequest.GetAssetBundle(downloadUrl, hash, 0);
             request.Send();
         }
@@ -110,34 +110,34 @@ namespace Heartcatch.Core.Services
 
         private void OnFailed()
         {
-            BaseLoaderService.OnAssetBundleLoadFailed();
+            BaseAssetLoaderService.OnAssetBundleLoadFailed();
         }
     }
 
     internal sealed class AssetBundleManifestDownloadOperation : BaseAssetBundleDownloadOperation
     {
-        public AssetBundleManifestDownloadOperation(BaseLoaderService baseLoaderService, string downloadUrl) : base(
-            baseLoaderService,
+        public AssetBundleManifestDownloadOperation(BaseAssetLoaderService baseAssetLoaderService, string downloadUrl) : base(
+            baseAssetLoaderService,
             downloadUrl)
         {
         }
 
         protected override void OnLoaded(AssetBundle assetBundle)
         {
-            BaseLoaderService.OnManifestAssetBundleLoaded(assetBundle);
+            BaseAssetLoaderService.OnManifestAssetBundleLoaded(assetBundle);
         }
     }
 
     internal sealed class AssetBundleManifestLoadOperation : BaseAssetBundleLoadOperation
     {
-        public AssetBundleManifestLoadOperation(BaseLoaderService baseLoaderService, string path) :
-            base(baseLoaderService, path)
+        public AssetBundleManifestLoadOperation(BaseAssetLoaderService baseAssetLoaderService, string path) :
+            base(baseAssetLoaderService, path)
         {
         }
 
         protected override void OnLoaded(AssetBundle assetBundle)
         {
-            BaseLoaderService.OnManifestAssetBundleLoaded(assetBundle);
+            BaseAssetLoaderService.OnManifestAssetBundleLoaded(assetBundle);
         }
     }
 
@@ -145,18 +145,18 @@ namespace Heartcatch.Core.Services
     {
         private readonly string assetBundleName;
 
-        public AssetBundleDownloadOperation(BaseLoaderService baseLoaderService,
+        public AssetBundleDownloadOperation(BaseAssetLoaderService baseAssetLoaderService,
             string assetBundleName,
-            string downloadUrl) : base(baseLoaderService, downloadUrl)
+            string downloadUrl) : base(baseAssetLoaderService, downloadUrl)
         {
             this.assetBundleName = assetBundleName;
         }
 
-        public AssetBundleDownloadOperation(BaseLoaderService baseLoaderService,
+        public AssetBundleDownloadOperation(BaseAssetLoaderService baseAssetLoaderService,
             string assetBundleName,
             string downloadUrl,
             Hash128 hash) : base(
-            baseLoaderService,
+            baseAssetLoaderService,
             downloadUrl,
             hash)
         {
@@ -165,7 +165,7 @@ namespace Heartcatch.Core.Services
 
         protected override void OnLoaded(AssetBundle assetBundle)
         {
-            BaseLoaderService.OnAssetBundleLoaded(assetBundleName, assetBundle);
+            BaseAssetLoaderService.OnAssetBundleLoaded(assetBundleName, assetBundle);
         }
     }
 
@@ -173,7 +173,7 @@ namespace Heartcatch.Core.Services
     {
         private readonly string assetBundleName;
 
-        public AssetBundleLoadOperation(BaseLoaderService baseLoaderService, string path) : base(baseLoaderService,
+        public AssetBundleLoadOperation(BaseAssetLoaderService baseAssetLoaderService, string path) : base(baseAssetLoaderService,
             path)
         {
             assetBundleName = Path.GetFileNameWithoutExtension(path);
@@ -181,7 +181,7 @@ namespace Heartcatch.Core.Services
 
         protected override void OnLoaded(AssetBundle assetBundle)
         {
-            BaseLoaderService.OnAssetBundleLoaded(assetBundleName, assetBundle);
+            BaseAssetLoaderService.OnAssetBundleLoaded(assetBundleName, assetBundle);
         }
     }
 
@@ -255,23 +255,23 @@ namespace Heartcatch.Core.Services
 
     internal sealed class WebAssetLoaderFactory : IAssetLoaderFactory
     {
-        private readonly BaseLoaderService baseLoaderService;
+        private readonly BaseAssetLoaderService baseAssetLoaderService;
         private readonly string baseUrl;
 
-        public WebAssetLoaderFactory(BaseLoaderService baseLoaderService, string baseUrl)
+        public WebAssetLoaderFactory(BaseAssetLoaderService baseAssetLoaderService, string baseUrl)
         {
-            this.baseLoaderService = baseLoaderService;
+            this.baseAssetLoaderService = baseAssetLoaderService;
             this.baseUrl = baseUrl;
         }
 
         public ILoadingOperation LoadAssetBundleManifest(string assetBundleName)
         {
-            return new AssetBundleManifestDownloadOperation(baseLoaderService, GetUrlForBundle(assetBundleName));
+            return new AssetBundleManifestDownloadOperation(baseAssetLoaderService, GetUrlForBundle(assetBundleName));
         }
 
         public ILoadingOperation LoadAssetBundle(string assetBundleName, Hash128 hash)
         {
-            return new AssetBundleDownloadOperation(baseLoaderService,
+            return new AssetBundleDownloadOperation(baseAssetLoaderService,
                 assetBundleName,
                 GetUrlForBundle(assetBundleName),
                 hash);
@@ -285,23 +285,23 @@ namespace Heartcatch.Core.Services
 
     internal sealed class LocalAssetLoaderFactory : IAssetLoaderFactory
     {
-        private readonly BaseLoaderService baseLoaderService;
+        private readonly BaseAssetLoaderService baseAssetLoaderService;
         private readonly string rootPath;
 
-        public LocalAssetLoaderFactory(BaseLoaderService baseLoaderService, string rootPath)
+        public LocalAssetLoaderFactory(BaseAssetLoaderService baseAssetLoaderService, string rootPath)
         {
-            this.baseLoaderService = baseLoaderService;
+            this.baseAssetLoaderService = baseAssetLoaderService;
             this.rootPath = rootPath;
         }
 
         public ILoadingOperation LoadAssetBundleManifest(string assetBundleName)
         {
-            return new AssetBundleManifestLoadOperation(baseLoaderService, GetBundlePath(assetBundleName));
+            return new AssetBundleManifestLoadOperation(baseAssetLoaderService, GetBundlePath(assetBundleName));
         }
 
         public ILoadingOperation LoadAssetBundle(string assetBundleName, Hash128 hash)
         {
-            return new AssetBundleLoadOperation(baseLoaderService, GetBundlePath(assetBundleName));
+            return new AssetBundleLoadOperation(baseAssetLoaderService, GetBundlePath(assetBundleName));
         }
 
         private string GetBundlePath(string assetBundleName)
@@ -312,17 +312,17 @@ namespace Heartcatch.Core.Services
 
     internal sealed class PreloadAssetBundlesOperation : ILoadingOperation
     {
-        private BaseLoaderService loaderService;
+        private BaseAssetLoaderService assetLoaderService;
         private int bundlesToLoad = 0;
         private Action onLoaded;
 
-        public PreloadAssetBundlesOperation(BaseLoaderService loaderService, string[] assetBundles, Action onLoaded)
+        public PreloadAssetBundlesOperation(BaseAssetLoaderService assetLoaderService, string[] assetBundles, Action onLoaded)
         {
             bundlesToLoad = assetBundles.Length;
             this.onLoaded = onLoaded;
             foreach (var assetBundle in assetBundles)
             {
-                loaderService.LoadAssetBundle(assetBundle, bundle => bundlesToLoad--);
+                assetLoaderService.LoadAssetBundle(assetBundle, bundle => bundlesToLoad--);
             }
         }
 

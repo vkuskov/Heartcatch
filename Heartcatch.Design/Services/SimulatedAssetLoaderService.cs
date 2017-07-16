@@ -8,12 +8,12 @@ using UnityEngine;
 
 namespace Heartcatch.Design.Services
 {
-    public sealed class SimulatedLoaderService : ILoaderService
+    public sealed class SimulatedAssetLoaderService : IAssetLoaderService
     {
         private readonly Dictionary<string, SimulatedAssetBundleModel> _assetBundles =
             new Dictionary<string, SimulatedAssetBundleModel>();
 
-        public SimulatedLoaderService()
+        public SimulatedAssetLoaderService()
         {
             LoadAssetBundles<AssetBundleDescriptionModel>();
             LoadAssetBundles<UIAssetBundleDescriptionModel>();

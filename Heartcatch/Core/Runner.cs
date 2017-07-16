@@ -14,7 +14,7 @@ namespace Heartcatch.Core
         private bool isInitialized;
 
         [Inject]
-        public ILoaderService LoaderService { get; set; }
+        public IAssetLoaderService AssetLoaderService { get; set; }
 
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         public static void StartUp()
@@ -51,7 +51,7 @@ namespace Heartcatch.Core
         protected virtual void Update()
         {
             var mainContext = context as MainContext;
-            if (!isInitialized && LoaderService.IsInitialized)
+            if (!isInitialized && AssetLoaderService.IsInitialized)
             {
                 mainContext.OnAssetsReady();
                 isInitialized = true;

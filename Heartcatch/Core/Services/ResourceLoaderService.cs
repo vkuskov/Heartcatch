@@ -7,7 +7,7 @@ namespace Heartcatch.Core.Services
     public sealed class ResourceLoaderService : IResourceLoaderService
     {
         [Inject]
-        public ILoaderService LoaderService { get; set; }
+        public IAssetLoaderService AssetLoaderService { get; set; }
 
         [Inject]
         public IPool<ResourceRequestModel> ResourceRequests { get; set; }
@@ -21,7 +21,7 @@ namespace Heartcatch.Core.Services
                 var name = request.Key;
                 var assetBundle = request.Value.AssetBundle;
                 var assetName = request.Value.AssetName;
-                LoaderService.LoadAssetBundle(assetBundle, bundle =>
+                AssetLoaderService.LoadAssetBundle(assetBundle, bundle =>
                 {
                     bundle.LoadAsset<Object>(assetName, resource =>
                     {
