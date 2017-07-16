@@ -18,14 +18,19 @@ namespace Heartcatch.Editor
         [MenuItem("Heartcatch/Build Remote Bundles", priority = 100)]
         public static void BuildBundlesForCurrentPlatform()
         {
+            Debug.Log("Buidling remote bundles...");
             BuildBundles(EditorUserBuildSettings.activeBuildTarget, false);
+            Debug.Log("DONE!");
         }
 
         [MenuItem("Heartcatch/Build Local Bundles", priority = 101)]
         public static void BuildLocalBundlesForCurrentPlatform()
         {
+            Debug.Log("Building local bundles...");
             BuildBundles(EditorUserBuildSettings.activeBuildTarget, true);
+            Debug.Log("Copying bundles to StreamingAssets...");
             CopyAssetBundlesToStreamingAssets(GetAssetBundlePath(EditorUserBuildSettings.activeBuildTarget), true);
+            Debug.Log("DONE!");
         }
 
         [MenuItem("Heartcatch/Build Dev (Remote bundles)", priority = 200)]
@@ -79,7 +84,9 @@ namespace Heartcatch.Editor
                 scenes = GetScenesToBuild(),
                 options = BuildOptions.StrictMode
             };
+            Debug.Log("Buidling player...");
             BuildPipeline.BuildPlayer(options);
+            Debug.Log("DONE!");
         }
 
         private static string[] GetScenesToBuild()
@@ -139,7 +146,6 @@ namespace Heartcatch.Editor
 
         private static void CopySingleBundle(string source, string destination, string name)
         {
-            Debug.LogFormat("Copy bundle {0} to {1}", name, destination);
             var srcPath = Path.Combine(source, name);
             var destPath = Path.Combine(destination, name);
             File.Copy(srcPath, destPath);
@@ -159,7 +165,6 @@ namespace Heartcatch.Editor
 
         public static AssetBundleManifest BuildBundles(BuildTarget target, bool preferLz4)
         {
-            Debug.Log("Build asset bundles");
             var path = GetAssetBundlePath(target);
             Directory.CreateDirectory(path);
             var bundles = GetAssetBundlesToBuild().ToArray();
@@ -192,7 +197,6 @@ namespace Heartcatch.Editor
                 var desc = AssetDatabase.LoadAssetAtPath<T>(path);
                 var allAssets = desc.GetAssetPaths().ToArray();
                 var bundle = new AssetBundleBuild();
-                Debug.LogFormat("Bundle: {0}", desc.Name);
                 bundle.assetBundleName = desc.Name;
                 bundle.assetNames = GetAllAssetPaths(allAssets);
                 yield return bundle;
