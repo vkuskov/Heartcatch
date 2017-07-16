@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 namespace Heartcatch.Core.Services
 {
-    public sealed class LevelLoaderService : BaseLevelLoaderService
+    public sealed class SceneLoaderService : BaseSceneLoaderService
     {
         protected override AsyncOperation LoadScene(string path, bool additive)
         {

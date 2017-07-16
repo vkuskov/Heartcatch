@@ -65,13 +65,13 @@
     <Compile Include="Core\Models\ResourceRequestModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Runner.cs" />
-    <Compile Include="Core\Services\BaseLevelLoaderService.cs" />
-    <Compile Include="Core\Services\ILevelLoaderService.cs" />
+    <Compile Include="Core\Services\BaseSceneLoaderService.cs" />
+    <Compile Include="Core\Services\ISceneLoaderService.cs" />
     <Compile Include="Core\Services\ILoaderService.cs" />
     <Compile Include="Core\Services\IResourceLoaderService.cs" />
     <Compile Include="Core\Services\ITimeService.cs" />
     <Compile Include="Core\Services\IUpdateService.cs" />
-    <Compile Include="Core\Services\LevelLoaderService.cs" />
+    <Compile Include="Core\Services\SceneLoaderService.cs" />
     <Compile Include="Core\Services\BaseLoaderService.cs" />
     <Compile Include="Core\Services\LoadingOperations.cs" />
     <Compile Include="Core\Services\LocalLoaderService.cs" />

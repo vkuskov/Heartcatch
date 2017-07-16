@@ -20,7 +20,7 @@ namespace Heartcatch.Core.View
         public ILoaderService LoaderService { get; set; }
 
         [Inject]
-        public ILevelLoaderService LevelLoaderService { get; set; }
+        public ISceneLoaderService SceneLoaderService { get; set; }
 
         public override void OnRegister()
         {
@@ -47,7 +47,7 @@ namespace Heartcatch.Core.View
 
         private void OnTestLevelLoaded(IAssetBundleModel bundle)
         {
-            LevelLoaderService.LoadScenes(bundle.GetScenePath(0));
+            SceneLoaderService.LoadScenes(bundle.GetScenePath(0));
         }
     }
 }

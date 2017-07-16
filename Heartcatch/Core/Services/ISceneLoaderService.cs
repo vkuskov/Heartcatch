@@ -1,6 +1,6 @@
 ﻿namespace Heartcatch.Core.Services
 {
-    public interface ILevelLoaderService
+    public interface ISceneLoaderService
     {
         void LoadScenes(params string[] paths);
         void Update();

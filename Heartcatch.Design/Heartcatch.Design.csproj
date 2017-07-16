@@ -55,7 +55,7 @@
     <Compile Include="Models\SimulatedAssetBundleModel.cs" />
     <Compile Include="Models\UIAssetBundleDescriptionModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\SimulatedLevelLoaderService.cs" />
+    <Compile Include="Services\SimulatedSceneLoaderService.cs" />
     <Compile Include="Services\SimulatedLoaderService.cs" />
   </ItemGroup>
   <ItemGroup>

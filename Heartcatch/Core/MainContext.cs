@@ -12,7 +12,7 @@ namespace Heartcatch.Core
     public abstract class MainContext : SignalContext
     {
         private ILoaderService baseLoaderService;
-        private ILevelLoaderService levelLoaderService;
+        private ISceneLoaderService sceneLoaderService;
         private SmoothTimeService timeService;
         private UpdateService updateService;
 
@@ -26,9 +26,9 @@ namespace Heartcatch.Core
             var gameConfig = Resources.Load<GameConfigModel>(Utility.GameConfigResource);
             injectionBinder.Bind<IGameConfigModel>().ToValue(gameConfig).CrossContext();
             baseLoaderService = CreateLoaderService(gameConfig);
-            levelLoaderService = CreateLevelLoaderService();
+            sceneLoaderService = CreateLevelLoaderService();
             injectionBinder.Bind<ILoaderService>().ToValue(baseLoaderService).CrossContext();
-            injectionBinder.Bind<ILevelLoaderService>().ToValue(levelLoaderService);
+            injectionBinder.Bind<ISceneLoaderService>().ToValue(sceneLoaderService);
 
             updateService = new UpdateService();
             timeService = new SmoothTimeService();
@@ -56,7 +56,7 @@ namespace Heartcatch.Core
         public void Update()
         {
             timeService.Update(Time.deltaTime);
-            levelLoaderService.Update();
+            sceneLoaderService.Update();
             if (baseLoaderService != null)
                 baseLoaderService.Update();
             updateService.Update();
@@ -104,6 +104,6 @@ namespace Heartcatch.Core
 
         protected abstract ILoaderService CreateLoaderService(IGameConfigModel config);
 
-        protected abstract ILevelLoaderService CreateLevelLoaderService();
+        protected abstract ISceneLoaderService CreateLevelLoaderService();
     }
 }

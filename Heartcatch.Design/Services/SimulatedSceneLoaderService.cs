@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Heartcatch.Design.Services
 {
-    public sealed class SimulatedLevelLoaderService : BaseLevelLoaderService
+    public sealed class SimulatedSceneLoaderService : BaseSceneLoaderService
     {
         protected override AsyncOperation LoadScene(string path, bool additive)
         {
