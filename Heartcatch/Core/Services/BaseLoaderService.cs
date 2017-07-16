@@ -45,21 +45,6 @@ namespace Heartcatch.Core.Services
             }
         }
 
-        public void GetOrLoadAssetBundle(string name, Action<IAssetBundleModel> onLoaded)
-        {
-            var bundle = GetAssetBundle(name);
-            if (bundle.IsLoaded)
-            {
-                onLoaded(bundle);
-            }
-            else
-            {
-                if (!loadingAssetBundles.ContainsKey(name))
-                    LoadAssetBundle(name);
-                AddLoadingOperation(new WaitForAssetBundleToLoad(this, name, onLoaded));
-            }
-        }
-
         public void UnloadAll()
         {
             foreach (var it in assetBundles)
@@ -173,6 +158,7 @@ namespace Heartcatch.Core.Services
             var bundle = GetAssetBundle(name);
             if (bundle.IsLoadedItself || loadingAssetBundles.ContainsKey(name))
                 return;
+            Debug.LogFormat("Loading asset bundle: {0}", name);
             loadingAssetBundles.Add(name, bundle);
             AddLoadingOperation(loaderFactory.LoadAssetBundle(name, assetBundleManifest.GetAssetBundleHash(name)));
         }
