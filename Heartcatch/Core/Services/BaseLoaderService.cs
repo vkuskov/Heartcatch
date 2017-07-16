@@ -18,22 +18,27 @@ namespace Heartcatch.Core.Services
 
         private IAssetLoaderFactory loaderFactory;
 
-        public bool IsLoading => loadingOperations.Count > 0;
+        public bool IsLoading
+        {
+            get { return loadingOperations.Count > 0; }
+        }
 
-        public bool IsInitialized => assetBundleManifest != null;
+        public bool IsInitialized
+        {
+            get { return assetBundleManifest != null; }
+        }
 
         public void LoadAssetBundle(string name, Action<IAssetBundleModel> onLoaded)
         {
             var bundle = GetAssetBundle(name);
             if (bundle.IsLoaded)
             {
-                bundle.AddReference();
                 onLoaded(bundle);
             }
             else
             {
                 if (!loadingAssetBundles.ContainsKey(name))
-                    loadAssetBundle(name);
+                    LoadAssetBundle(name);
                 AddLoadingOperation(new WaitForAssetBundleToLoad(this, name, onLoaded));
             }
         }
@@ -48,7 +53,7 @@ namespace Heartcatch.Core.Services
             else
             {
                 if (!loadingAssetBundles.ContainsKey(name))
-                    loadAssetBundle(name);
+                    LoadAssetBundle(name);
                 AddLoadingOperation(new WaitForAssetBundleToLoad(this, name, onLoaded));
             }
         }
@@ -56,7 +61,7 @@ namespace Heartcatch.Core.Services
         public void UnloadAll()
         {
             foreach (var it in assetBundles)
-                it.Value.ForceUnload();
+                it.Value.Unload();
             Resources.UnloadUnusedAssets();
             GC.Collect();
         }
@@ -147,7 +152,7 @@ namespace Heartcatch.Core.Services
             throw new ArgumentException(string.Format("Asset bundle \"{0}\" doesn't exist", name));
         }
 
-        internal void loadAssetBundle(string name)
+        internal void LoadAssetBundle(string name)
         {
             var bundle = GetAssetBundle(name);
             if (bundle.IsLoadedItself || loadingAssetBundles.ContainsKey(name))

@@ -21,7 +21,7 @@ namespace Heartcatch.Core.Services
                 var name = request.Key;
                 var assetBundle = request.Value.AssetBundle;
                 var assetName = request.Value.AssetName;
-                LoaderService.GetOrLoadAssetBundle(assetBundle, bundle =>
+                LoaderService.LoadAssetBundle(assetBundle, bundle =>
                 {
                     bundle.LoadAsset<Object>(assetName, resource =>
                     {
