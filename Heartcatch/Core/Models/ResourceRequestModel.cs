@@ -18,7 +18,7 @@ namespace Heartcatch.Core.Models
                 throw new Exception(string.Format("Resource {0} is already requested", name));
         }
 
-        public T GetResource<T>(string name) where T : Object
+        public T GetResource<T>(string name) where T : class
         {
             Object result;
             if (loadedResources.TryGetValue(name, out result))
