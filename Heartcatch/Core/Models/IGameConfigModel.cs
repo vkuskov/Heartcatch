@@ -4,8 +4,9 @@
     {
         bool IsDevelopmentMode { get; }
         bool IsLocalBuild { get; }
+        string LoadingScene { get; }
         string AssetBundleUrl { get; }
-        string FirstSceneBundle { get; }
+        LevelReference FirstLevel { get; }
         string GameName { get; }
     }
 }
