@@ -51,6 +51,7 @@
     <Compile Include="Core\AssetBundleCachePrime.cs" />
     <Compile Include="Core\LevelReference.cs" />
     <Compile Include="Core\Services\ILevelLoaderService.cs" />
+    <Compile Include="Core\Services\LevelLoaderService.cs" />
     <Compile Include="Core\View\StartupMediator.cs" />
     <Compile Include="Core\View\StartupView.cs" />
     <Compile Include="Exceptions.cs" />

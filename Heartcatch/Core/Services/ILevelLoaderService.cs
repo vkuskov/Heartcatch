@@ -7,5 +7,6 @@ namespace Heartcatch.Core.Services
 {
     public interface ILevelLoaderService
     {
+        void LoadLevel(params LevelReference[] parts);
     }
 }

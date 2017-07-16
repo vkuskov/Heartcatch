@@ -17,10 +17,10 @@ namespace Heartcatch.Core.View
         public IGameConfigModel GameConfigModel { get; set; }
 
         [Inject]
-        public IAssetLoaderService AssetLoaderService { get; set; }
+        public ILevelLoaderService LevelLoaderService { get; set; }
 
         [Inject]
-        public ISceneLoaderService SceneLoaderService { get; set; }
+        public IAssetLoaderService AssetLoaderService { get; set; }
 
         public override void OnRegister()
         {
@@ -42,12 +42,8 @@ namespace Heartcatch.Core.View
 
         private void OnBundlesPreloaded()
         {
-            AssetLoaderService.LoadAssetBundle(GameConfigModel.FirstSceneBundle, OnTestLevelLoaded);
-        }
-
-        private void OnTestLevelLoaded(IAssetBundleModel bundle)
-        {
-            SceneLoaderService.LoadScenes(bundle.GetScenePath(0));
+            Debug.Log("Loading first level...");
+            LevelLoaderService.LoadLevel(GameConfigModel.FirstLevel);
         }
     }
 }
