@@ -172,11 +172,20 @@ namespace Heartcatch.Editor
 
         private static IEnumerable<AssetBundleBuild> GetAssetBundlesToBuild()
         {
-            var guids = AssetDatabase.FindAssets(string.Format("t:{0}", typeof(AssetBundleDescriptionModel)));
+            var allBundles = new List<AssetBundleBuild>();
+            allBundles.AddRange(GetAssetBundles<AssetBundleDescriptionModel>());
+            allBundles.AddRange(GetAssetBundles<UIAssetBundleDescriptionModel>());
+            return allBundles;
+        }
+
+        private static IEnumerable<AssetBundleBuild> GetAssetBundles<T>()
+            where T : ScriptableObject, IAssetBundleDescriptionModel
+        {
+            var guids = AssetDatabase.FindAssets(string.Format("t:{0}", typeof(T)));
             foreach (var guid in guids)
             {
                 var path = AssetDatabase.GUIDToAssetPath(guid);
-                var desc = AssetDatabase.LoadAssetAtPath<AssetBundleDescriptionModel>(path);
+                var desc = AssetDatabase.LoadAssetAtPath<T>(path);
                 var allAssets = desc.GetAssetPaths().ToArray();
                 var bundle = new AssetBundleBuild();
                 Debug.LogFormat("Bundle: {0}", desc.Name);

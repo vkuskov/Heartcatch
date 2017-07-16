@@ -15,11 +15,18 @@ namespace Heartcatch.Design.Services
 
         public SimulatedLoaderService()
         {
-            var guids = AssetDatabase.FindAssets(string.Format("t:{0}", typeof(AssetBundleDescriptionModel)));
+            LoadAssetBundles<AssetBundleDescriptionModel>();
+            LoadAssetBundles<UIAssetBundleDescriptionModel>();
+        }
+
+        private void LoadAssetBundles<T>()
+            where T : ScriptableObject, IAssetBundleDescriptionModel
+        {
+            var guids = AssetDatabase.FindAssets(string.Format("t:{0}", typeof(T)));
             foreach (var guid in guids)
             {
                 var path = AssetDatabase.GUIDToAssetPath(guid);
-                var description = AssetDatabase.LoadAssetAtPath<AssetBundleDescriptionModel>(path);
+                var description = AssetDatabase.LoadAssetAtPath<T>(path);
                 _assetBundles.Add(description.Name, new SimulatedAssetBundleModel(description));
             }
         }

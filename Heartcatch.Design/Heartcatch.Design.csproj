@@ -53,6 +53,7 @@
     <Compile Include="Models\AssetPath.cs" />
     <Compile Include="Models\IAssetBundleDescriptionModel.cs" />
     <Compile Include="Models\SimulatedAssetBundleModel.cs" />
+    <Compile Include="Models\UIAssetBundleDescriptionModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\SimulatedLevelLoaderService.cs" />
     <Compile Include="Services\SimulatedLoaderService.cs" />
