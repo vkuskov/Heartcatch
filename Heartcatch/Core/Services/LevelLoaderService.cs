@@ -31,7 +31,10 @@ namespace Heartcatch.Core.Services
 
         public void LoadLevel(params LevelReference[] parts)
         {
-            SceneManager.LoadScene(GameConfig.LoadingScene);
+            if (!IsLoadingScreen())
+            {
+                SceneManager.LoadScene(GameConfig.LoadingScene);
+            }
             AssetLoaderService.UnloadAll();
             Resources.UnloadUnusedAssets();
             GC.Collect();
@@ -51,6 +54,11 @@ namespace Heartcatch.Core.Services
                     }
                 });
             }
+        }
+
+        private bool IsLoadingScreen()
+        {
+            return SceneManager.sceneCount == 1 && SceneManager.GetSceneAt(0).name == GameConfig.LoadingScene;
         }
     }
 }
