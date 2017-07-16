@@ -2,6 +2,7 @@
 using Heartcatch.Core.Services;
 using strange.extensions.mediation.impl;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Heartcatch.Core.View
 {
@@ -25,6 +26,7 @@ namespace Heartcatch.Core.View
         public override void OnRegister()
         {
             base.OnRegister();
+            SceneManager.LoadScene(GameConfigModel.LoadingScene);
             AssetsReady.AddListener(OnAssetsReady);
         }
 

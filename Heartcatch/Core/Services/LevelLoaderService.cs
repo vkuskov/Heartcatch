@@ -19,6 +19,16 @@ namespace Heartcatch.Core.Services
         [Inject]
         public IAssetLoaderService AssetLoaderService { get; set; }
 
+        private sealed class ReferenceHack
+        {
+            public int Index { get; private set; }
+
+            public ReferenceHack(int index)
+            {
+                Index = index;
+            }
+        }
+
         public void LoadLevel(params LevelReference[] parts)
         {
             SceneManager.LoadScene(GameConfig.LoadingScene);
@@ -30,9 +40,10 @@ namespace Heartcatch.Core.Services
             for (int i = 0; i < parts.Length; ++i)
             {
                 var part = parts[i];
+                var reference = new ReferenceHack(i);
                 AssetLoaderService.LoadAssetBundle(part.AssetBundle, bundle =>
                 {
-                    sceneNames[i] = bundle.GetScenePath(part.SceneIndex);
+                    sceneNames[reference.Index] = bundle.GetScenePath(part.SceneIndex);
                     bundlesToLoad--;
                     if (bundlesToLoad == 0)
                     {
