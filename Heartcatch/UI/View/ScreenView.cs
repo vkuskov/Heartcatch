@@ -120,9 +120,9 @@ namespace Heartcatch.UI.View
 
         protected override void Awake()
         {
-            base.Awake();
             canvasGroup = GetComponent<CanvasGroup>();
             canvas = GetComponent<Canvas>();
+            base.Awake();
         }
 
         private bool UpdateTransition(GameTime gameTime, TimeSpan time, int direction)
