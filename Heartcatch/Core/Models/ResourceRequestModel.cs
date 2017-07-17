@@ -46,11 +46,5 @@ namespace Heartcatch.Core.Models
         {
             return requestedResources.GetEnumerator();
         }
-
-        public void Release()
-        {
-            requestedResources.Clear();
-            loadedResources.Clear();
-        }
     }
 }

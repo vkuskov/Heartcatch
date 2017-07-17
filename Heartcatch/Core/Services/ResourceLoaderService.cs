@@ -1,5 +1,6 @@
 ﻿using System;
 using Heartcatch.Core.Models;
+using strange.extensions.injector.api;
 using strange.extensions.pool.api;
 using Object = UnityEngine.Object;
 
@@ -11,11 +12,11 @@ namespace Heartcatch.Core.Services
         public IAssetLoaderService AssetLoaderService { get; set; }
 
         [Inject]
-        public IPool<ResourceRequestModel> ResourceRequests { get; set; }
+        public IInjectionBinder InjectionBinder { get; set; }
 
         public void RequestResources(IResourceModel resourceModel, Action<IResourceRequestModel> onLoaded)
         {
-            var requestModel = ResourceRequests.GetInstance();
+            var requestModel = new ResourceRequestModel();
             resourceModel.CollectResources(requestModel);
             foreach (var request in requestModel)
             {
@@ -30,8 +31,6 @@ namespace Heartcatch.Core.Services
                         if (requestModel.IsAllResourcesLoaded())
                         {
                             onLoaded(requestModel);
-                            requestModel.Release();
-                            ResourceRequests.ReturnInstance(requestModel);
                         }
                     });
                 });
