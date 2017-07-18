@@ -23,12 +23,16 @@ namespace Heartcatch.Editor
             EditorGUILayout.Space();
             newAssetName = EditorGUILayout.TextField("Name:", newAssetName);
             newHiDefAsset = EditorGUILayout.ObjectField(newHiDefAsset, typeof(Object), false);
-            EditorGUI.BeginDisabledGroup(string.IsNullOrEmpty(newAssetName) || newHiDefAsset == null);
+            EditorGUI.BeginDisabledGroup(newHiDefAsset == null);
             if (GUILayout.Button("Add"))
             {
                 if (assetBundle.Assets == null)
                 {
                     assetBundle.Assets = new List<Asset>();
+                }
+                if (string.IsNullOrEmpty(newAssetName))
+                {
+                    newAssetName = newHiDefAsset.name;
                 }
                 assetBundle.Assets.Add(new Asset {Name = newAssetName, HiDefAsset = newHiDefAsset});
                 EditorUtility.SetDirty(assetBundle);
@@ -57,7 +61,10 @@ namespace Heartcatch.Editor
                         dirty = true;
                     }
                     if (toRemove)
+                    {
+                        dirty = true;
                         assetBundle.Assets.RemoveAt(i);
+                    }
                     else
                         i++;
                 }
