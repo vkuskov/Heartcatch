@@ -26,6 +26,8 @@ namespace Heartcatch.Core.Services
 
         public void Update()
         {
+            foreach (var it in toRemove)
+                updateables.RemoveAll(updateable => updateable.Updateable == it);
             if (toSubscribe.Count > 0)
             {
                 foreach (var it in toSubscribe)
@@ -35,8 +37,6 @@ namespace Heartcatch.Core.Services
             }
             foreach (var it in updateables)
                 it.Updateable.OnUpdate();
-            foreach (var it in toRemove)
-                updateables.RemoveAll(updateable => updateable.Updateable == it);
         }
 
         private struct Data
