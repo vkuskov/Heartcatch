@@ -14,7 +14,7 @@ namespace Heartcatch.Editor
         [MenuItem("Heartcatch/Clear bundle cache", priority = 2)]
         public static void ClearBundleCache()
         {
-            Caching.CleanCache();
+            Caching.ClearCache();
         }
     }
 }

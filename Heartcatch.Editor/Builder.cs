@@ -199,6 +199,7 @@ namespace Heartcatch.Editor
                 var bundle = new AssetBundleBuild();
                 bundle.assetBundleName = desc.Name;
                 bundle.assetNames = GetAllAssetPaths(allAssets);
+                bundle.addressableNames = GetAllAddressableNames(allAssets);
                 yield return bundle;
             }
         }
