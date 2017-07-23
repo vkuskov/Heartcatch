@@ -9,7 +9,6 @@ namespace Heartcatch.Core.Services
         private const float FinishedLoadingProgress = 0.9f;
 
         private readonly List<AsyncOperation> operations = new List<AsyncOperation>();
-        private bool firstPhase;
 
         public void LoadScenes(params string[] paths)
         {
@@ -18,24 +17,15 @@ namespace Heartcatch.Core.Services
             for (var i = 0; i < paths.Length; ++i)
             {
                 var operation = LoadScene(paths[i], i > 0);
-                operation.allowSceneActivation = false;
                 operations.Add(operation);
             }
-            firstPhase = true;
         }
 
         public void Update()
         {
             if (operations.Count == 0)
                 return;
-            if (firstPhase && IsLoadingFinished())
-            {
-                GC.Collect(GC.MaxGeneration);
-                foreach (var operation in operations)
-                    operation.allowSceneActivation = true;
-                firstPhase = false;
-            }
-            if (!firstPhase && IsAllDone())
+            if (IsAllDone())
                 operations.Clear();
         }
 
