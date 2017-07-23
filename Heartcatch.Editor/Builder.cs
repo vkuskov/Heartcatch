@@ -18,6 +18,7 @@ namespace Heartcatch.Editor
         [MenuItem("Heartcatch/Build Remote Bundles", priority = 100)]
         public static void BuildBundlesForCurrentPlatform()
         {
+            PreprocessContent();
             Debug.Log("Buidling remote bundles...");
             BuildBundles(EditorUserBuildSettings.activeBuildTarget, false);
             Debug.Log("DONE!");
@@ -26,11 +27,11 @@ namespace Heartcatch.Editor
         [MenuItem("Heartcatch/Build Local Bundles", priority = 101)]
         public static void BuildLocalBundlesForCurrentPlatform()
         {
+            PreprocessContent();
             Debug.Log("Building local bundles...");
             BuildBundles(EditorUserBuildSettings.activeBuildTarget, true);
-            Debug.Log("Copying bundles to StreamingAssets...");
-            CopyAssetBundlesToStreamingAssets(GetAssetBundlePath(EditorUserBuildSettings.activeBuildTarget), true);
             Debug.Log("DONE!");
+            CopyAssetBundlesToStreamingAssets(GetAssetBundlePath(EditorUserBuildSettings.activeBuildTarget), true);
         }
 
         [MenuItem("Heartcatch/Build Dev (Remote bundles)", priority = 200)]
@@ -69,10 +70,13 @@ namespace Heartcatch.Editor
 
         public static void BuildGame(BuildTarget target, bool includeAssetBundles, bool localBuild)
         {
+            PreprocessContent();
             var assetBundlePath = GetAssetBundlePath(target);
             if (includeAssetBundles)
             {
+                Debug.Log("Building bundles for a game...");
                 var manifest = BuildBundles(target, localBuild);
+                Debug.Log("DONE!");
                 if (manifest != null)
                     CopyAssetBundlesToStreamingAssets(assetBundlePath, localBuild);
             }
@@ -87,6 +91,28 @@ namespace Heartcatch.Editor
             Debug.Log("Buidling player...");
             BuildPipeline.BuildPlayer(options);
             Debug.Log("DONE!");
+        }
+
+        [MenuItem("Heartcatch/Preprocess content", priority = 50)]
+        private static void PreprocessContent()
+        {
+            Debug.Log("Preprocessing content...");
+            Preprocess<SpriteAtlasDescription>();
+            Debug.Log("DONE!");
+        }
+
+        private static void Preprocess<T>() where T : ScriptableObject, IContentPreprocessor
+        {
+            var guids = AssetDatabase.FindAssets(string.Format("t:{0}", typeof(T)));
+            foreach (var guid in guids)
+            {
+                var path = AssetDatabase.GUIDToAssetPath(guid);
+                var asset = AssetDatabase.LoadAssetAtPath<T>(path);
+                if (asset != null)
+                {
+                    asset.Apply();
+                }
+            }
         }
 
         private static string[] GetScenesToBuild()
@@ -131,6 +157,7 @@ namespace Heartcatch.Editor
 
         private static void CopyAssetBundlesToStreamingAssets(string sourcePath, bool fullCopy)
         {
+            Debug.Log("Copying asset bundles to StreamingAssets....");
             if (Directory.Exists(Application.streamingAssetsPath))
                 Directory.Delete(Application.streamingAssetsPath, true);
             var fullPath = Path.Combine(Application.streamingAssetsPath, sourcePath);
@@ -141,6 +168,7 @@ namespace Heartcatch.Editor
                 CopySingleBundle(sourcePath, fullPath, it);
             }
             CopySingleBundle(sourcePath, fullPath, Utility.GetPlatformName());
+            Debug.Log("DONE!");
         }
 
         private static void CopySingleBundle(string source, string destination, string name)
