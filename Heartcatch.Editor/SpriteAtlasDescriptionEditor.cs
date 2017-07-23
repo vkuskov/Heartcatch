@@ -9,16 +9,7 @@ using UnityEngine.Experimental.UIElements;
 namespace Heartcatch.Editor
 {
     [CustomEditor(typeof(SpriteAtlasDescription))]
-    class SpriteAtlasDescriptionEditor : UnityEditor.Editor
+    class SpriteAtlasDescriptionEditor : ContentPreprocessorEditor<SpriteAtlasDescription>
     {
-        public override void OnInspectorGUI()
-        {
-            base.OnInspectorGUI();
-            if (GUILayout.Button("Apply"))
-            {
-                var desc = (SpriteAtlasDescription) target;
-                desc.Apply();
-            }
-        }
     }
 }

@@ -8,7 +8,7 @@ using UnityEngine;
 namespace Heartcatch.Editor
 {
     [CreateAssetMenu(menuName = "Heartcatch/Sprite Atlas Description")]
-    public sealed class SpriteAtlasDescription : ScriptableObject
+    public sealed class SpriteAtlasDescription : ScriptableObject, IContentPreprocessor
     {
         [SerializeField] private string path;
         [SerializeField] private string packingTag = "Atlas";

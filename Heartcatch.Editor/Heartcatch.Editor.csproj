@@ -51,6 +51,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Builder.cs" />
+    <Compile Include="ContentPreprocessorEditor.cs" />
+    <Compile Include="IContentPreprocessor.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SpriteAtlasDescription.cs" />
     <Compile Include="SpriteAtlasDescriptionEditor.cs" />
