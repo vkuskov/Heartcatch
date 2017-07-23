@@ -53,7 +53,7 @@ namespace Heartcatch.Core
 
         public void Update()
         {
-            timeService.Update(Time.deltaTime);
+            timeService.Update(Time.deltaTime, Time.unscaledDeltaTime);
             sceneLoaderService.Update();
             if (baseAssetLoaderService != null)
                 baseAssetLoaderService.Update();
