@@ -14,14 +14,15 @@ namespace Heartcatch.Design.Models
         private readonly string name;
         private readonly Dictionary<string, string> nameToPath = new Dictionary<string, string>();
 
-        public SimulatedAssetBundleModel(IAssetBundleDescriptionModel description)
+        public SimulatedAssetBundleModel(string name)
         {
-            name = description.Name;
-            foreach (var path in description.GetAssetPaths())
+            this.name = name;
+            var allPaths = AssetDatabase.GetAssetPathsFromAssetBundle(name);
+            foreach (var path in allPaths)
             {
-                if (Path.GetExtension(path.HiDefAssetPath) == ".unity")
-                    allScenes.Add(path.HiDefAssetPath);
-                nameToPath.Add(path.Name, path.HiDefAssetPath);
+                if (Path.GetExtension(path) == ".unity")
+                    allScenes.Add(path);
+                nameToPath.Add(Path.GetFileNameWithoutExtension(path), path);
             }
         }
 

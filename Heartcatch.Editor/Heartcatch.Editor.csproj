@@ -50,11 +50,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AssetBundleEditor.cs" />
     <Compile Include="Builder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SpriteAtlasDescription.cs" />
+    <Compile Include="SpriteAtlasDescriptionEditor.cs" />
     <Compile Include="Tools.cs" />
-    <Compile Include="UIAssetBundleEditor.cs" />
     <Compile Include="Utility.cs" />
   </ItemGroup>
   <ItemGroup>

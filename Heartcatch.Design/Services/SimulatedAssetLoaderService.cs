@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using Heartcatch.Core.Models;
 using Heartcatch.Core.Services;
 using Heartcatch.Design.Models;
@@ -15,19 +16,10 @@ namespace Heartcatch.Design.Services
 
         public SimulatedAssetLoaderService()
         {
-            LoadAssetBundles<AssetBundleDescriptionModel>();
-            LoadAssetBundles<UiAssetBundleDescriptionModel>();
-        }
-
-        private void LoadAssetBundles<T>()
-            where T : ScriptableObject, IAssetBundleDescriptionModel
-        {
-            var guids = AssetDatabase.FindAssets(string.Format("t:{0}", typeof(T)));
-            foreach (var guid in guids)
+            var allAssetBundles = AssetDatabase.GetAllAssetBundleNames();
+            foreach (var assetBundle in allAssetBundles)
             {
-                var path = AssetDatabase.GUIDToAssetPath(guid);
-                var description = AssetDatabase.LoadAssetAtPath<T>(path);
-                assetBundles.Add(description.Name, new SimulatedAssetBundleModel(description));
+                assetBundles.Add(assetBundle, new SimulatedAssetBundleModel(assetBundle));
             }
         }
 

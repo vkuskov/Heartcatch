@@ -135,9 +135,8 @@ namespace Heartcatch.Editor
                 Directory.Delete(Application.streamingAssetsPath, true);
             var fullPath = Path.Combine(Application.streamingAssetsPath, sourcePath);
             Directory.CreateDirectory(fullPath);
-            foreach (var it in GetAssetsForStreamingAssets<AssetBundleDescriptionModel>(fullCopy))
-                CopySingleBundle(sourcePath, fullPath, it);
-            foreach (var it in GetAssetsForStreamingAssets<UiAssetBundleDescriptionModel>(fullCopy))
+            var allAssetBundles = AssetDatabase.GetAllAssetBundleNames();
+            foreach (var it in allAssetBundles)
             {
                 CopySingleBundle(sourcePath, fullPath, it);
             }
@@ -151,78 +150,18 @@ namespace Heartcatch.Editor
             File.Copy(srcPath, destPath);
         }
 
-        private static IEnumerable<string> GetAssetsForStreamingAssets<T>(bool fullCopy) where T : ScriptableObject, IAssetBundleDescriptionModel
-        {
-            var guids = AssetDatabase.FindAssets(string.Format("t:{0}", typeof(T)));
-            foreach (var guid in guids)
-            {
-                var path = AssetDatabase.GUIDToAssetPath(guid);
-                var desc = AssetDatabase.LoadAssetAtPath<T>(path);
-                if (fullCopy || desc.IncludeToStreamingAssets)
-                    yield return desc.Name;
-            }
-        }
-
         public static AssetBundleManifest BuildBundles(BuildTarget target, bool preferLz4)
         {
             var path = GetAssetBundlePath(target);
             Directory.CreateDirectory(path);
-            var bundles = GetAssetBundlesToBuild().ToArray();
             var options = BuildAssetBundleOptions.StrictMode;
             if (target == BuildTarget.WebGL)
                 options |= BuildAssetBundleOptions.UncompressedAssetBundle;
             else if (preferLz4)
                 options |= BuildAssetBundleOptions.ChunkBasedCompression;
             return BuildPipeline.BuildAssetBundles(path,
-                bundles,
                 options,
                 target);
-        }
-
-        private static IEnumerable<AssetBundleBuild> GetAssetBundlesToBuild()
-        {
-            var allBundles = new List<AssetBundleBuild>();
-            allBundles.AddRange(GetAssetBundles<AssetBundleDescriptionModel>());
-            allBundles.AddRange(GetAssetBundles<UiAssetBundleDescriptionModel>());
-            return allBundles;
-        }
-
-        private static IEnumerable<AssetBundleBuild> GetAssetBundles<T>()
-            where T : ScriptableObject, IAssetBundleDescriptionModel
-        {
-            var guids = AssetDatabase.FindAssets(string.Format("t:{0}", typeof(T)));
-            foreach (var guid in guids)
-            {
-                var path = AssetDatabase.GUIDToAssetPath(guid);
-                var desc = AssetDatabase.LoadAssetAtPath<T>(path);
-                var allAssets = desc.GetAssetPaths().ToArray();
-                var bundle = new AssetBundleBuild();
-                bundle.assetBundleName = desc.Name;
-                bundle.assetNames = GetAllAssetPaths(allAssets);
-                bundle.addressableNames = GetAllAddressableNames(allAssets);
-                yield return bundle;
-            }
-        }
-
-        private static string[] GetAllAddressableNames(AssetPath[] paths)
-        {
-            var result = new string[paths.Length];
-            for (var i = 0; i < paths.Length; ++i)
-                result[i] = paths[i].Name;
-            return result;
-        }
-
-        private static string[] GetAllAssetPaths(AssetPath[] paths)
-        {
-            var result = new string[paths.Length];
-            for (var i = 0; i < paths.Length; ++i)
-                result[i] = paths[i].HiDefAssetPath;
-            return result;
-        }
-
-        public static string GetAssetBundlePathForCurrentPlatform()
-        {
-            return GetAssetBundlePath(EditorUserBuildSettings.activeBuildTarget);
         }
 
         public static string GetAssetBundlePath(BuildTarget target)
