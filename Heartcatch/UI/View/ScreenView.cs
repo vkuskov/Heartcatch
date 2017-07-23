@@ -137,7 +137,7 @@ namespace Heartcatch.UI.View
             if (time == TimeSpan.Zero)
                 transitionDelta = 1f;
             else
-                transitionDelta = (float) (gameTime.DeltaTime / time.TotalSeconds);
+                transitionDelta = (float) (gameTime.UnscaledDeltaTime / time.TotalSeconds);
             transitionPosition += transitionDelta * direction;
             if (direction < 0 && transitionPosition <= 0 || direction > 0 && transitionPosition >= 1)
             {
