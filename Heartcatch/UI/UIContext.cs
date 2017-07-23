@@ -9,11 +9,9 @@ namespace Heartcatch.UI
     public class UiContext : SignalContext
     {
         private IScreenManagerService screenManagerService;
-        private IUiConfigModel uiConfig;
 
-        public UiContext(MonoBehaviour view, IUiConfigModel uiConfig) : base(view)
+        public UiContext(MonoBehaviour view) : base(view)
         {
-            this.uiConfig = uiConfig;
         }
 
         protected override void mapBindings()
@@ -21,16 +19,7 @@ namespace Heartcatch.UI
             base.mapBindings();
             injectionBinder.Bind<IScreenManagerService>().To<ScreenManagerService>().ToSingleton();
             screenManagerService = injectionBinder.GetInstance<IScreenManagerService>();
-            injectionBinder.Bind<IUiSoundService>().To<UiSoundService>().ToSingleton();
-            injectionBinder.Bind<IUiConfigModel>().ToValue(uiConfig);
             FindAndBindAllScreens();
-            BindUiSoundManager();
-        }
-
-        private void BindUiSoundManager()
-        {
-            var go = contextView as GameObject;
-            injectionBinder.Bind<IUiSoundPlayer>().ToValue(go.GetComponent<IUiSoundPlayer>());
         }
 
         private void FindAndBindAllScreens()

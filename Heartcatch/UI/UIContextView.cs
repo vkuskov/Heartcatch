@@ -6,23 +6,21 @@ using UnityEngine;
 
 namespace Heartcatch.UI
 {
-    [RequireComponent(typeof(UiSoundManager))]
     public class UiContextView : ContextView
     {
         [Inject]
         public ITimeService TimeService { get; set; }
 
-        [SerializeField] private UiConfigModel uiConfig;
 
         protected virtual void Awake()
         {
-            context = CreateUiContext(uiConfig);
+            context = CreateUiContext();
             context.Start();
         }
 
-        protected virtual UiContext CreateUiContext(IUiConfigModel uiConfig)
+        protected virtual UiContext CreateUiContext()
         {
-            return new UiContext(this, uiConfig);
+            return new UiContext(this);
         }
 
         protected virtual void Update()
