@@ -29,15 +29,27 @@ namespace Heartcatch.Core.Services
             }
         }
 
+        public LevelLoaderService()
+        {
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        private void OnSceneLoaded(Scene arg0, LoadSceneMode arg1)
+        {
+            if (arg0.name == GameConfig.LoadingScene)
+            {
+                AssetLoaderService.UnloadAll();
+                Resources.UnloadUnusedAssets();
+                GC.Collect();
+            }
+        }
+
         public void LoadLevel(params LevelReference[] parts)
         {
             if (!IsLoadingScreen())
             {
                 SceneManager.LoadScene(GameConfig.LoadingScene);
             }
-            AssetLoaderService.UnloadAll();
-            Resources.UnloadUnusedAssets();
-            GC.Collect();
             var sceneNames = new string[parts.Length];
             int bundlesToLoad = parts.Length;
             for (int i = 0; i < parts.Length; ++i)
