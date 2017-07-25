@@ -22,6 +22,11 @@ namespace Heartcatch.Design.Models
             {
                 if (Path.GetExtension(path) == ".unity")
                     allScenes.Add(path);
+                var assetName = Path.GetFileNameWithoutExtension(path);
+                if (nameToPath.ContainsKey(name))
+                {
+                    throw new Exception(string.Format("Asset {0} already exits in bundle {1}", assetName, name)); 
+                }
                 nameToPath.Add(Path.GetFileNameWithoutExtension(path), path);
             }
         }
