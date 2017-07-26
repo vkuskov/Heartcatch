@@ -14,6 +14,10 @@ namespace Heartcatch.Core.Services
             private readonly double[] sortedSamples = new double[SamplesCount];
             private int cursor;
             private double deltaTime;
+            private double totalTime;
+
+            public double TotalTime { get { return totalTime; } }
+            public double DeltaTime { get { return deltaTime; } }
 
             public void Reset()
             {
@@ -26,7 +30,7 @@ namespace Heartcatch.Core.Services
                 cursor = 0;
             }
 
-            public double Update(float deltaTime)
+            public void Update(float deltaTime)
             {
                 samples[cursor] = deltaTime;
                 cursor++;
@@ -38,7 +42,8 @@ namespace Heartcatch.Core.Services
                 for (var i = IgnoreBorderCases; i < SamplesCount - IgnoreBorderCases; ++i)
                     total += sortedSamples[i];
                 var smoothDeltaTime = total / (SamplesCount - IgnoreBorderCases * 2);
-                return smoothDeltaTime;
+                totalTime += smoothDeltaTime;
+                this.deltaTime = smoothDeltaTime;
             }
         }
 
@@ -64,8 +69,15 @@ namespace Heartcatch.Core.Services
 
         internal void Update(float deltaTime, float unscaledDeltaTime)
         {
-            time.DeltaTime = timeSmoother.Update(deltaTime);
-            time.UnscaledDeltaTime = unscaledTimeSmoother.Update(unscaledDeltaTime);
+            timeSmoother.Update(deltaTime);
+            unscaledTimeSmoother.Update(unscaledDeltaTime);
+            time = new GameTime()
+            {
+                DeltaTime = timeSmoother.DeltaTime,
+                TotalTime = timeSmoother.TotalTime,
+                UnscaledDeltaTime = unscaledTimeSmoother.DeltaTime,
+                UnscaledTotalTime = unscaledTimeSmoother.TotalTime
+            };
         }
     }
 }

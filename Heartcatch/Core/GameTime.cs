@@ -7,5 +7,7 @@ namespace Heartcatch.Core
     {
         public double DeltaTime;
         public double UnscaledDeltaTime;
+        public double TotalTime;
+        public double UnscaledTotalTime;
     }
 }
