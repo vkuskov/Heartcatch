@@ -15,6 +15,7 @@ namespace Heartcatch.UI.Models
     {
         bool IsPopup { get; }
         ScreenState State { get; }
+        float TransitionPosition { get; }
         void Attach(IScreenManagerService screenManagerService);
         void OnUpdate(GameTime gameTime, bool otherScreenHasFocus, bool coveredByOtherScreen);
         void ExitScreen();

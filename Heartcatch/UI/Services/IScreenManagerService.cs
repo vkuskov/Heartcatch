@@ -7,6 +7,7 @@ namespace Heartcatch.UI.Services
     {
         void AddScreen(IScreenModel screen);
         void RemoveScreen(IScreenModel screen);
-        void Update(GameTime gameTime);
+        void Update(GameTime gameTime, bool trace = false);
+        void Trace();
     }
 }

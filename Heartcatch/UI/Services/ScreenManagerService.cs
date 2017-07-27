@@ -1,6 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Heartcatch.Core;
 using Heartcatch.UI.Models;
+using JetBrains.Annotations;
+using UnityEngine;
 using UnityEngine.Assertions;
 
 namespace Heartcatch.UI.Services
@@ -12,18 +15,25 @@ namespace Heartcatch.UI.Services
 
         public void AddScreen(IScreenModel screen)
         {
-            Assert.IsFalse(screens.Contains(screen));
+            if (screens.Contains(screen))
+            {
+                throw new ArgumentException(string.Format("Screen {0} is already added", screen));
+            }
             screen.Attach(this);
             screens.Add(screen);
         }
 
         public void RemoveScreen(IScreenModel screen)
         {
+            if (!screens.Contains(screen))
+            {
+                throw new ArgumentException(string.Format("Screen {0} wasn't registered"));
+            }
             screensToUpdate.Remove(screen);
             screens.Remove(screen);
         }
 
-        public void Update(GameTime gameTime)
+        public void Update(GameTime gameTime, bool trace)
         {
             screensToUpdate.Clear();
             foreach (var screen in screens)
@@ -43,6 +53,21 @@ namespace Heartcatch.UI.Services
                         coveredByOtherScreen = true;
                 }
             }
+            if (trace)
+            {
+                Trace();
+            }
         }
+
+        public void Trace()
+        {
+            Debug.Log("======== Screen Manager Trace ====");
+            for (int i = 0; i < screens.Count; ++i)
+            {
+                var screen = screens[i];
+                Debug.LogFormat("{0} - Popup: {1} - State: {2} - Transition: {3} - {4}", i + 1, screen.IsPopup, screen.State, screen.TransitionPosition, screen);
+            }
+        }
+
     }
 }
