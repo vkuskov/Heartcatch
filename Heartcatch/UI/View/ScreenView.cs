@@ -12,22 +12,16 @@ namespace Heartcatch.UI.View
     {
         private const float TransitionCurve = 2.2f;
 
-        [SerializeField] private string screenName = "Screen";
-
         private CanvasGroup canvasGroup;
         private Canvas canvas;
         private bool otherScreenHasFocus;
-        private ScreenState screenState = ScreenState.TransitionOn;
+        private ScreenState screenState = ScreenState.Hidden;
         private TimeSpan transitionOffTime = TimeSpan.Zero;
         private TimeSpan transitionOnTime = TimeSpan.Zero;
         private float transitionPosition = 1f;
 
         protected IScreenManagerService ScreenManagerService { get; private set; }
 
-        public string ScreenName
-        {
-            get { return screenName; }
-        }
         public TimeSpan TransitionOnTime
         {
             get { return transitionOnTime; }
